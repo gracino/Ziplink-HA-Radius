@@ -4,11 +4,11 @@ Ziplink high availability RADIUS project.
 ## Summary System Description From Job Messages
 
  1. Sonar is used as source of all customer authentication. 3k customers.
- 1. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?)
- 1. New RADIUS server exists. Not finished. 
- 1. HA setup should be architected.
- 1. Sonar "talks" to only one RADIUS server. (Does it? Or does it talk to MySQL?)
- 1. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS.
+ 2. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?)
+ 3. New RADIUS server exists. Not finished. 
+ 4. HA setup should be architected.
+ 5. Sonar "talks" to only one RADIUS server. (Does it? Or does it talk to MySQL?)
+ 6. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS.
 
 ### References
 
@@ -26,3 +26,7 @@ Ziplink high availability RADIUS project.
  1. Work on alpha version.
  1. Work on beta version.
 
+Some comments regarding ? from #2 and #5
+We did increase NAS timeout in the Radius config from 300ms to 600ms
+I suspect Sonar talks to MySQL as that is the db that holds the custome info. 
+The NAS also reports PPPoE address assigned to CPE and data using that traverses the PPPoE tunnel. That goes back into Sonar.
