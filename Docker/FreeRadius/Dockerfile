@@ -1,3 +1,8 @@
+#Basic building block for docker-compose HA FreeRadius
+#cluster with nginx udp reverse proxy, replicated 
+#and sharded. Centrally MySQL configured and agregated back into central
+#Sonar controlled mySQL instance.
+
 FROM alpine:3.6
 MAINTAINER Support Group <docker@unxs.io>
 
@@ -18,3 +23,9 @@ EXPOSE \
     18120
 
 CMD ["radiusd","-xx","-f"]
+
+#test local dev
+#	docker build -t freeradius:dev .
+#private repo version:
+#	docker build -t docker0.unxs.io:5000/freeradius:dev .
+#	docker push docker0.unxs.io:5000/freeradius:dev
