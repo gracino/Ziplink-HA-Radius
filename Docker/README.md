@@ -4,6 +4,8 @@
 
 Just testing things out quickly at this time.
 
+In the process of adding NGINX proxies to the initial docker-compose run file.
+
 ### Overview
 
 The idea is to have multiple NGINX reverse proxy front ends via DNS multiple A record round robin.
@@ -20,5 +22,5 @@ the ISP provisioning software: Sonar. Again replicating the auth data from this 
 servers is trivial.
 
 The aggregation is straight forward but may limit the ability of Sonar to access up to date accounting records. 
-Since this is usually a monthly billing procedure. Account holds based on usage can be handled with a special subsystem if
+Since this is usually a monthly billing procedure the timing issue can probably be met easily by using the data only on day 1 or similar cut off. Account holds based on usage can be handled with a special subsystem if
 required by the ISP.
