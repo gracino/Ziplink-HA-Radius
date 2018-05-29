@@ -24,3 +24,12 @@ servers is trivial.
 The aggregation is straight forward but may limit the ability of Sonar to access up to date accounting records. 
 Since this is usually a monthly billing procedure the timing issue can probably be met easily by using the data only on day 1 or similar cut off. Account holds based on usage can be handled with a special subsystem if
 required by the ISP.
+
+## Nginx Proxies
+
+### Testing the UDP Proxy Configuration
+
+Two FreeRadius servers behind one Nginx proxy:
+
+ 1. Test accounting packet.
+ 1. Test auth packet.
