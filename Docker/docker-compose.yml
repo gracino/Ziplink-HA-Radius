@@ -2,48 +2,25 @@ version: '2'
 
 services:
 
- nginx:
+ nginx0:
   image: "nginx:alpine"
-  networks:
-   mynet:
-    ipv4_address: 172.25.0.10
+  ports:
+   - "1812:1812/udp"
+   - "1813:1813"
+   - "18120:18120"
 
  freeradius0:
   image: "freeradius:dev"
-  ports:
-   - "1812:1812/udp"
-   - "1813:1813"
-   - "18120:18120"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
-  networks:
-   mynet:
-    ipv4_address: 172.25.0.100
     
-  freeradius1:
+ freeradius1:
   image: "freeradius:dev"
-  ports:
-   - "1812:1812/udp"
-   - "1813:1813"
-   - "18120:18120"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
-  networks:
-   mynet:
-    ipv4_address: 172.25.0.101
 
  freeradius-test:
   image: "freeradius:dev"
-  command: "radtest testing password freeradius0 0 SECRET"
-  networks:
-   mynet:
-    ipv4_address: 172.25.0.101
-
-networks:
-  mynet:
-    driver: bridge
-    ipam:
-      config:
-      - subnet: 172.25.0.0/24
+  command: "radtest testing password nginx0 0 SECRET"
