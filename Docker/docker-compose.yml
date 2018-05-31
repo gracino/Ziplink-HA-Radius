@@ -21,6 +21,12 @@ services:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
 
- freeradius-test:
+ freeradius-authtest:
   image: "freeradius:dev"
   command: "radtest testing password nginx0 0 SECRET"
+
+ freeradius-accttest:
+  image: "freeradius:dev"
+  command: "radclient -f /etc/raddb/acct.start nginx0 acct SECRET"
+  volumes:
+   - "./acct.start:/etc/raddb/acct.start"

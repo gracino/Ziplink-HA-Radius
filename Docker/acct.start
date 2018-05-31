@@ -1,0 +1,11 @@
+	Acct-Session-Id = "7000007A"
+	User-Name = "JoeUser"
+	NAS-IP-Address = 192.1.1.5
+	NAS-Port-Id = 32
+	NAS-Port-Type = Async
+	Acct-Status-Type = Start
+	Connect-Info = "radclient test"
+	Service-Type = Framed-User
+	Framed-Protocol = PPP
+	Framed-IP-Address = 192.1.1.66
+	Acct-Delay-Time = 0

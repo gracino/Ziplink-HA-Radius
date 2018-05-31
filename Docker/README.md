@@ -32,27 +32,55 @@ required by the ISP.
 Two FreeRadius servers behind one Nginx proxy:
 
  1. Test auth packet. Ok.
- 1. Test accounting packet.
+ 1. Test accounting packet. Ok.
 
-Test details:
+Test details auth:
 ```
 [root@c7docker Docker]# docker-compose stop nginx0
 Stopping docker_nginx0_1 ... done
 [root@c7docker Docker]# docker cp nginx.conf docker_nginx0_1:/etc/nginx/nginx.conf
 [root@c7docker Docker]# docker-compose start nginx0
 Starting nginx0 ... done
-[root@c7docker Docker]# docker-compose up freeradius-test
-Starting docker_freeradius-test_1 ... 
-Starting docker_freeradius-test_1 ... done
-Attaching to docker_freeradius-test_1
-freeradius-test_1  | Sent Access-Request Id 158 from 0.0.0.0:48903 to 172.18.0.3:1812 length 77
-freeradius-test_1  | 	User-Name = "testing"
-freeradius-test_1  | 	User-Password = "password"
-freeradius-test_1  | 	NAS-IP-Address = 172.18.0.4
-freeradius-test_1  | 	NAS-Port = 0
-freeradius-test_1  | 	Message-Authenticator = 0x00
-freeradius-test_1  | 	Cleartext-Password = "password"
-freeradius-test_1  | Received Access-Accept Id 158 from 172.18.0.3:1812 to 0.0.0.0:0 length 20
-docker_freeradius-test_1 exited with code 0
+[root@c7docker Docker]# docker-compose up freeradius-authtest
+Starting docker_freeradius-authtest_1 ... 
+Starting docker_freeradius-authtest_1 ... done
+Attaching to docker_freeradius-authtest_1
+freeradius-authtest_1  | Sent Access-Request Id 158 from 0.0.0.0:48903 to 172.18.0.3:1812 length 77
+freeradius-authtest_1  | 	User-Name = "testing"
+freeradius-authtest_1  | 	User-Password = "password"
+freeradius-authtest_1  | 	NAS-IP-Address = 172.18.0.4
+freeradius-authtest_1  | 	NAS-Port = 0
+freeradius-authtest_1  | 	Message-Authenticator = 0x00
+freeradius-authtest_1  | 	Cleartext-Password = "password"
+freeradius-authtest_1  | Received Access-Accept Id 158 from 172.18.0.3:1812 to 0.0.0.0:0 length 20
+docker_freeradius-authtest_1 exited with code 0
 [root@c7docker Docker]# 
+```
+
+Test details acct:
+```
+[root@c7docker Docker]# docker-compose up freeradius-accttest
+Starting docker_freeradius-accttest_1 ... 
+Starting docker_freeradius-accttest_1 ... done
+Attaching to docker_freeradius-accttest_1
+freeradius-accttest_1  | Sent Accounting-Request Id 138 from 0.0.0.0:33958 to 172.18.0.2:1813 length 101
+freeradius-accttest_1  | Received Accounting-Response Id 138 from 172.18.0.2:1813 to 0.0.0.0:0 length 20
+docker_freeradius-accttest_1 exited with code 0
+[root@c7docker Docker]# docker exec -ti docker_freeradius1_1 cat /var/log/radius/radacct/172.18.0.2/detail-20180531
+Thu May 31 21:13:24 2018
+	Acct-Session-Id = "7000007A"
+	User-Name = "JoeUser"
+	NAS-IP-Address = 192.1.1.5
+	NAS-Port-Id = "32"
+	NAS-Port-Type = Async
+	Acct-Status-Type = Start
+	Connect-Info = "radclient test"
+	Service-Type = Framed-User
+	Framed-Protocol = PPP
+	Framed-IP-Address = 192.1.1.66
+	Acct-Delay-Time = 0
+	Event-Timestamp = "May 31 2018 21:13:24 UTC"
+	Tmp-String-9 = "ai:"
+	Acct-Unique-Session-Id = "6e46eb58aa3916921b11573f3e023278"
+	Timestamp = 1527801204
 ```
