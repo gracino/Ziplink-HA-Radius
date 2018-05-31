@@ -31,5 +31,28 @@ required by the ISP.
 
 Two FreeRadius servers behind one Nginx proxy:
 
+ 1. Test auth packet. Ok.
  1. Test accounting packet.
- 1. Test auth packet.
+
+Test details:
+```
+[root@c7docker Docker]# docker-compose stop nginx0
+Stopping docker_nginx0_1 ... done
+[root@c7docker Docker]# docker cp nginx.conf docker_nginx0_1:/etc/nginx/nginx.conf
+[root@c7docker Docker]# docker-compose start nginx0
+Starting nginx0 ... done
+[root@c7docker Docker]# docker-compose up freeradius-test
+Starting docker_freeradius-test_1 ... 
+Starting docker_freeradius-test_1 ... done
+Attaching to docker_freeradius-test_1
+freeradius-test_1  | Sent Access-Request Id 158 from 0.0.0.0:48903 to 172.18.0.3:1812 length 77
+freeradius-test_1  | 	User-Name = "testing"
+freeradius-test_1  | 	User-Password = "password"
+freeradius-test_1  | 	NAS-IP-Address = 172.18.0.4
+freeradius-test_1  | 	NAS-Port = 0
+freeradius-test_1  | 	Message-Authenticator = 0x00
+freeradius-test_1  | 	Cleartext-Password = "password"
+freeradius-test_1  | Received Access-Accept Id 158 from 172.18.0.3:1812 to 0.0.0.0:0 length 20
+docker_freeradius-test_1 exited with code 0
+[root@c7docker Docker]# 
+```
