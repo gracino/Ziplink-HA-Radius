@@ -92,18 +92,21 @@ Thu May 31 21:13:24 2018
 
 ## MySQL Backend
 
+Authentication table is small. nas has only 17 rows at this time. The main issue then is how to auto shard accounting
+requests and then aggregate into single read only view for Sonar based billing/reporting.
 We will add MySQL based auth and acct. There are many options we will go with the highest performance options first.
 
 ### Performance Issues
 
- 1. MySQL should not be SSL
+ 1. MySQL should not be SSL for radius servers. Most likely just fine for remote Sonar access to aggregated accounting server.
  1. Connection should be via socket for local radiusd servers.
  1. MySQL should run on host node and not be a Docker container.
  1. Authentication is a read only operation as far as MySQL goes for the auth radius server.
  1. Read only optimization: MyISAM table, ```ALTER TABLE nas ROW_FORMAT=Fixed;```, See https://dba.stackexchange.com/questions/22509/optimizing-mysql-for-read-only/22552#22552
  1. Or nas authentication table could be kept in RAM via: Scan the entire contents of the table on each startup to preload the content into memory with ```SELECT * FROM nas ORDER BY nasname``` for each table followed by ```SELECT nasname FROM nas ORDER BY nasname```.
-
- 
+ 1. By having many radacct MySQL instances we can scale perfectly as far as getting acct data saved somewhere. If Sonar
+ or other tools use some kind of session limitation the sharding will be in the way. And the aggregation system must be
+ able to keep up.
 
 ### IMPORTANT FreeRadius Version 3
 
