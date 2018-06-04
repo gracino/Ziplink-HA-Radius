@@ -2,9 +2,8 @@
 
 ### Status
 
-Just testing things out quickly at this time.
-
-In the process of setting up MySQL version and documenting existing production server.
+Basic testing and proof of concept done.
+Working on MySQL integration now. MySQL server done, working on FreeRadius 3.0 MySQL config.
 
 ### Overview
 
