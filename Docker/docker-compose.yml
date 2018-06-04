@@ -9,17 +9,28 @@ services:
    - "1813:1813"
    - "18120:18120"
 
+ mysql0:
+  image: "mysqlfr:dev"
+  volumes:
+   - "/var/local/mysql0:/var/lib/mysql"
+
  freeradius0:
   image: "freeradius:dev"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  depends_on:
+   - mysql0
+   - nginx0
     
  freeradius1:
   image: "freeradius:dev"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  depends_on:
+   - mysql0
+   - nginx0
 
  freeradius-authtest:
   image: "freeradius:dev"
