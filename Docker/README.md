@@ -4,7 +4,7 @@
 
 Just testing things out quickly at this time.
 
-In the process of adding NGINX proxies to the initial docker-compose run file.
+In the process of setting up MySQL version and documenting existing production server.
 
 ### Overview
 
@@ -33,14 +33,19 @@ Two FreeRadius servers behind one Nginx proxy:
 
  1. Test auth packet. Ok.
  1. Test accounting packet. Ok.
-
-Test details auth:
-```
+ 
+ First before any tests (until we have our own modified nginx):
+ 
+ ```
 [root@c7docker Docker]# docker-compose stop nginx0
 Stopping docker_nginx0_1 ... done
 [root@c7docker Docker]# docker cp nginx.conf docker_nginx0_1:/etc/nginx/nginx.conf
 [root@c7docker Docker]# docker-compose start nginx0
 Starting nginx0 ... done
+ ```
+
+Test details auth:
+```
 [root@c7docker Docker]# docker-compose up freeradius-authtest
 Starting docker_freeradius-authtest_1 ... 
 Starting docker_freeradius-authtest_1 ... done
@@ -83,4 +88,29 @@ Thu May 31 21:13:24 2018
 	Tmp-String-9 = "ai:"
 	Acct-Unique-Session-Id = "6e46eb58aa3916921b11573f3e023278"
 	Timestamp = 1527801204
+```
+
+## MySQL Backend
+
+User table is radcheck has 4000 rows. NAS authentication table is small, has only 17 rows at this time. The main performance issue is accounting, we are thinking about sharding via loadbalancing (nginx and/or dns multiple A records for nginx instances) and then aggregating accounting into single read only MySQL server for Sonar based billing/reporting.
+
+### Performance Issues
+
+ 1. MySQL should not be SSL for radius servers. Most likely just fine for remote Sonar access to aggregated accounting server.
+ 1. Connection should be via socket for local radiusd servers.
+ 1. MySQL should run on host node and not be a Docker container.
+ 1. Authentication is a read only operation as far as MySQL goes for the auth radius server.
+ 1. Read only optimization: Use radcheck as a MyISAM table and then ```ALTER TABLE radcheck ROW_FORMAT=Fixed;```, See https://dba.stackexchange.com/questions/22509/optimizing-mysql-for-read-only/22552#22552
+ 1. Or radcheck authentication table could be kept in RAM via: Scan the entire contents of the table on each startup to preload the content into memory with ```SELECT * FROM radcheck ORDER BY username``` for each table followed by ```SELECT username FROM radcheck ORDER BY username```.
+ 1. By having many radacct MySQL instances we can scale perfectly as far as getting acct data saved somewhere. If Sonar
+ or other tools use some kind of session limitation the sharding will be in the way. And the aggregation system must be
+ able to keep up.
+
+### IMPORTANT FreeRadius Version 3
+
+```
+[root@c7docker Docker]# docker exec -ti docker_freeradius0_1 /usr/sbin/radiusd -v
+radiusd: FreeRADIUS Version 3.0.13, for host x86_64-alpine-linux-musl, built on Jun 15 2017 at 15:06:29
+FreeRADIUS Version 3.0.13
+Copyright (C) 1999-2017 The FreeRADIUS server project and contributors
 ```
