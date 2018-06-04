@@ -7,8 +7,6 @@ RUN apk update && \
 	mkdir /scripts && \
 	rm -rf /var/cache/apk/*
 
-VOLUME ["/var/lib/mysql"]
-
 COPY ./startup.sh /scripts/startup.sh
 RUN chmod +x /scripts/startup.sh
 
