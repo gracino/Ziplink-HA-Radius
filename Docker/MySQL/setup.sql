@@ -11,14 +11,22 @@
 #
 #  Create default administrator for RADIUS
 #
-CREATE USER 'radius'@'localhost';
-SET PASSWORD FOR 'radius'@'localhost' = PASSWORD('radpass');
+DELETE FROM mysql.user;
+CREATE USER 'root'@'locahost';
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('mysqlrootpwd');
+GRANT ALL on *.* TO 'root'@'localhost';
+
+#radius user must connect only from local network servers
+#firewall access please
+CREATE USER 'radius'@'%';
+SET PASSWORD FOR 'radius'@'%' = PASSWORD('lksjdf78498kdfjh');
 
 # The server can read any table in SQL
-GRANT SELECT ON radius.* TO 'radius'@'localhost';
+GRANT SELECT ON radius.* TO 'radius'@'%';
 
 # The server can write to the accounting and post-auth logging table.
 #
 #  i.e.
-GRANT ALL on radius.radacct TO 'radius'@'localhost';
-GRANT ALL on radius.radpostauth TO 'radius'@'localhost';
+GRANT ALL on radius.radacct TO 'radius'@'%';
+GRANT ALL on radius.radpostauth TO 'radius'@'%';
+FLUSH PRIVILEGES;

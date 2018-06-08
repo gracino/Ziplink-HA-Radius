@@ -2,13 +2,6 @@ version: '2'
 
 services:
 
- nginx0:
-  image: "nginxfr:dev"
-  ports:
-   - "1812:1812/udp"
-   - "1813:1813"
-   - "18120:18120"
-
  mysql0:
   image: "mysqlfr:dev"
   volumes:
@@ -21,7 +14,6 @@ services:
    - "./users:/etc/raddb/users"
   depends_on:
    - mysql0
-   - nginx0
     
  freeradius1:
   image: "freeradius:dev"
@@ -30,14 +22,26 @@ services:
    - "./users:/etc/raddb/users"
   depends_on:
    - mysql0
-   - nginx0
+
+ nginx0:
+  image: "nginxfr:dev"
+  ports:
+   - "1812:1812/udp"
+   - "1813:1813"
+  depends_on:
+   - freeradius0
+   - freeradius1
 
  freeradius-authtest:
   image: "freeradius:dev"
   command: "radtest testing password nginx0 0 SECRET"
+  depends_on:
+   - nginx0
 
  freeradius-accttest:
   image: "freeradius:dev"
   command: "radclient -f /etc/raddb/acct.start nginx0 acct SECRET"
   volumes:
    - "./acct.start:/etc/raddb/acct.start"
+  depends_on:
+   - nginx0

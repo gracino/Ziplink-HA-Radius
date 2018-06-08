@@ -13,7 +13,6 @@ RUN chmod +x /scripts/startup.sh
 #FreeRadius
 RUN mkdir /etc/FreeRadius
 COPY ./schema.sql /etc/FreeRadius/schema.sql
-COPY ./setup.sql /etc/FreeRadius/setup.sql
 
 EXPOSE 3306
 

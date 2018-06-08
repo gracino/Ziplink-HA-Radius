@@ -1,4 +1,6 @@
-use radius;
+CREATE DATABASE radius;
+
+USE radius;
 
 
 ###########################################################################
@@ -151,3 +153,16 @@ CREATE TABLE nas (
   PRIMARY KEY (id),
   KEY nasname (nasname)
 );
+
+
+insert into radcheck (username,attribute,op,value) values("fredf", "Cleartext-Password", ":=", "wilma");
+
+use mysql;
+update user set user='radius',host='%',password=PASSWORD('lksjdf78498kdfjh') where host='localhost' and user='';
+update db set Db='radius\_%' where Db='test\_%';
+update db set Db='radius' where Db='test';
+update db set User='radius';
+flush privileges;
+
+#grant select on radius.* to radius@'%' identified by 'lksjdf78498kdfjh';
+#grant all on radius.radius.radacct to radius@'%' identified by 'lksjdf78498kdfjh';
