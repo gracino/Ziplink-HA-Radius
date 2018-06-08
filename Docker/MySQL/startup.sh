@@ -6,24 +6,24 @@ if [ ! -d "/run/mysqld" ]; then
 fi
 
 if [ -d /var/lib/mysql/mysql ]; then
-	echo -n 'MySQL directory already present, skipping creation'
+	echo -n '[i] MySQL directory already present, skipping creation'
 else
-	echo -n "MySQL data directory not found, creating initial DBs"
+	echo -n "[i] MySQL data directory not found, creating initial DBs"
 
 	chown -R mysql:mysql /var/lib/mysql
 
 	# init database
-	echo -n 'Initializing Database'
+	echo -n '[i] Initializing Database'
 	mysql_install_db --user=mysql
-	echo -n 'Database Initialized'
+	echo -n '[i] Database Initialized'
 
 	# Create FreeRadius schema
-	echo -n "Creating FreeRadius Schema via schema.sql"
+	echo -n "[i] Creating FreeRadius schema and mysql user,db,tables_priv via schema.sql"
 	/usr/bin/mysqld --user=mysql --bootstrap < /etc/FreeRadius/schema.sql;
 fi
 
-echo -n "Sleeping 5 sec"
+echo -n "[i] Sleeping 5 sec"
 sleep 5
 
-echo -n 'Start running mysqld'
+echo -n '[i] Start running mysqld'
 exec /usr/bin/mysqld --user=mysql --console
