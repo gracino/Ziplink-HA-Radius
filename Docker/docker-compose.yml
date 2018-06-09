@@ -34,7 +34,8 @@ services:
 
  freeradius-authtest:
   image: "freeradius:dev"
-  command: "radtest testing password nginx0 0 SECRET"
+  #command: "radtest testing password nginx0 0 SECRET"
+  command: "radtest Sonar_1170982 AF745JB6L75P nginx0 0 SECRET"
   depends_on:
    - nginx0
 

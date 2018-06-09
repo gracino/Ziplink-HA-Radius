@@ -9,7 +9,7 @@ MAINTAINER Support Group <docker@unxs.io>
 WORKDIR /projects
 
 RUN apk update && apk upgrade && \
-    apk add --update freeradius freeradius-mysql freeradius-radclient openssl-dev && \
+    apk add --update freeradius freeradius-mysql mysql-client freeradius-radclient openssl-dev && \
     chgrp radius  /usr/sbin/radiusd && chmod g+rwx /usr/sbin/radiusd && \
     rm /var/cache/apk/*
 
@@ -21,12 +21,17 @@ RUN rm /etc/raddb/sites-enabled/inner-tunnel;
 #Our specific config
 COPY ./etc/raddb/sites-available/default /etc/raddb/sites-available/default
 
+#special start up script that waits for mysql.
+COPY ./start.sh /usr/sbin/start.sh
+COPY ./mysql /usr/bin/mysql
+
 #Does not have inner-tunnel tcp port
 EXPOSE 1812/udp 1813/udp
 
 #CMD ["radiusd","-xx","-f"]
 #debug mode
-CMD ["radiusd","-X","-f"]
+#CMD ["radiusd","-X","-f"]
+CMD ["/usr/sbin/start.sh"]
 
 #test local dev
 #	docker build -t freeradius:dev .
