@@ -12,7 +12,8 @@ RUN chmod +x /scripts/startup.sh
 
 #FreeRadius
 RUN mkdir /etc/FreeRadius
-COPY ./schema.sql /etc/FreeRadius/schema.sql
+#Configured into schema.sql via startup.sh below
+COPY ./schema.sql.template /etc/FreeRadius/schema.sql.template
 
 EXPOSE 3306
 

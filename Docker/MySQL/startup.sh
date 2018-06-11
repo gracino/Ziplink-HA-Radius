@@ -1,5 +1,15 @@
 #!/bin/sh
 
+#Provide defaults
+if [ "$cMysqlLogin" == "" ];then
+	cMysqlLogin="radius";
+fi
+if [ "$cMysqlPassword" == "" ];then
+	cMysqlPassword="lksjdf78498kdfjh";
+fi
+
+envsubst '${cMysqlLogin},${cMysqlPassword}' < /etc/FreeRadius/schema.sql.template > /etc/FreeRadius/schema.sql;
+
 if [ ! -d "/run/mysqld" ]; then
 	mkdir -p /run/mysqld
 	chown -R mysql:mysql /run/mysqld

@@ -217,17 +217,17 @@ use mysql;
 #Host      | User   | Password
 DELETE FROM user WHERE User='';
 DELETE FROM user WHERE User='root' and Host!='localhost';
-INSERT INTO user SET Host='%',User='radius',Password=PASSWORD('lksjdf78498kdfjh'); 
+INSERT INTO user SET Host='%',User='${cMysqlLogin}',Password=PASSWORD('${cMysqlPassword}'); 
 
 #db
 #Users and permissions
 #Host | Db     | User | Select_priv
 DELETE FROM db;
-INSERT INTO db SET Host='%',Db='radius',User='radius',Select_priv='Y'; 
+INSERT INTO db SET Host='%',Db='radius',User='${cMysqlLogin}',Select_priv='Y'; 
 
 #tables_priv
 # Host | Db     | User   | Table_name  | Grantor        | Timestamp           | Table_priv
-INSERT INTO tables_priv SET Host='%',Db='radius',User='radius',Table_name='radacct',Grantor='root@localhost',Table_priv='Select,Insert,Update,Delete,Create,Drop,References,Index,Alter,Create View,Show view,Trigger';
-INSERT INTO tables_priv SET Host='%',Db='radius',User='radius',Table_name='radpostauth',Grantor='root@localhost',Table_priv='Select,Insert,Update,Delete,Create,Drop,References,Index,Alter,Create View,Show view,Trigger';
+INSERT INTO tables_priv SET Host='%',Db='radius',User='${cMysqlLogin}',Table_name='radacct',Grantor='root@localhost',Table_priv='Select,Insert,Update,Delete,Create,Drop,References,Index,Alter,Create View,Show view,Trigger';
+INSERT INTO tables_priv SET Host='%',Db='radius',User='${cMysqlLogin}',Table_name='radpostauth',Grantor='root@localhost',Table_priv='Select,Insert,Update,Delete,Create,Drop,References,Index,Alter,Create View,Show view,Trigger';
 
 FLUSH privileges;
