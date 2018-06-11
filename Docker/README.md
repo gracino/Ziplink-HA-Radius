@@ -11,8 +11,8 @@ Working on the testing framework and code.
  1. Single Nginx front end is a reverse proxy to 2 accounting FreeRadius servers and two FreeRadius authentication servers.
  1. Two MySQL (MariaDB) servers are being used by the two FreeRadius servers.
  1. Other FreeRadius container instances are used for generating RADIUS traffic.
- 1. Testing subsystem uses runs Docker containers and bash scripting to generate RADIUS traffic, turn on and off backend FreeRadius servers,
-look at logs results and determine pass or no pass results.
+ 1. Testing subsystem uses Docker containers and bash scripting to generate RADIUS traffic, turn on and off backend FreeRadius servers,
+look at logs results, and finally determine pass or no pass results.
 
 ### Overview Notes
 
