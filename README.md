@@ -17,16 +17,25 @@ Ziplink high availability RADIUS project.
  1. https://github.com/FreeRADIUS
 
 ## Summary Roadmap
- 1. Survey current system. 
- 1. Document current system.
- 1. Meeting with stakeholders.
- 1. Work on proposal.
- 1. Review proposal.
- 1. Approve proposal.
- 1. Work on alpha version.
- 1. Work on beta version.
+ 1. Survey current system. Done.
+ 1. Document current system. Done.
+ 1. Meeting with stakeholders. Pending. Recommend before beta work starts.
+ 1. Work on proposal. Done for current manual failover production system.
+ 1. Review proposal for Alpha system. Pending.
+ 1. Approve proposal for Alpha system. Pending.
+ 1. Work on alpha version. Mostly finished, working started on final testing framework.
+ 1. Work on beta version. Not started.
 
-Some comments regarding ? from #2 and #5:
+## Production System Fix
+ 1. Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
+causing MySQL subsystem to lock. VM cores  were doubled and RAM also. Production system is now stable with little i/o wait time
+and low uptime numbers.
+
+## Other Notes
+
+See Docker dir README.md for more information on Alpha system.
+
+Some comments regarding questions from Roadmap items #2 and #5:
 
 We did increase NAS timeout in the Radius config from 300ms to 600ms. Sounds reasonable. But we should aim for 200ms max transaction time.
 
