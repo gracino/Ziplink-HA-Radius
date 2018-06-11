@@ -15,7 +15,8 @@ RUN apk update && apk upgrade && \
 
 #Setup for MySQL
 RUN cd /etc/raddb/mods-enabled; ln -s ../mods-available/sql sql;
-COPY ./etc/raddb/mods-available/sql /etc/raddb/mods-available/sql
+#Template becomes /etc/raddb/mods-available/sql via start.sh below
+COPY ./etc/raddb/sql.template /etc/raddb/sql.template
 #We will not be using the EAP/PEAP inner-tunnel
 RUN rm /etc/raddb/sites-enabled/inner-tunnel;
 #Our specific config

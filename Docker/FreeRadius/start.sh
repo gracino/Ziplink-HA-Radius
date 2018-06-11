@@ -2,6 +2,20 @@
 
 #we check for a known value that is only available after MySQL is completely available for use.
 
+#Provide defaults
+if [ "$cMysqlServer" == "" ];then
+	cMysqlServer="mysql0";
+fi
+if [ "$cMysqlLogin" == "" ];then
+	cMysqlLogin="radius";
+fi
+if [ "$cMysqlPassword" == "" ];then
+	cMysqlPassword="lksjdf78498kdfjh";
+fi
+
+envsubst '${cMysqlServer},${cMysqlLogin},${cMysqlPassword}' < /etc/raddb/sql.template > /etc/raddb/available-options/sql;
+
+
 cStatus="Fail";
 cReturn="";
 while [ $cStatus == "Fail" ]; do

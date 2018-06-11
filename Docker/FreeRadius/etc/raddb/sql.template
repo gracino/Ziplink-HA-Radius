@@ -94,10 +94,10 @@ sql {
 #	port = 3306
 #	login = "radius"
 #	password = "radpass"
-	server = "mysql0"
+	server = "${cMysqlServer}"
 	port = 3306
-	login = "radius"
-	password = "lksjdf78498kdfjh"
+	login = "${cMysqlLogin}"
+	password = "${cMysqlPassword}"
 
 	# Database table configuration for everything except Oracle
 	radius_db = "radius"

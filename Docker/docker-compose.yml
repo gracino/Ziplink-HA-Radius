@@ -7,11 +7,20 @@ services:
   volumes:
    - "/var/local/mysql0:/var/lib/mysql"
 
+ mysql1:
+  image: "mysqlfr:dev"
+  volumes:
+   - "/var/local/mysql1:/var/lib/mysql"
+
  freeradius0:
   image: "freeradius:dev"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  environment:
+   - cMysqlServer=mysql0
+   - cMysqlLogin=radius
+   - cMysqlPassword=lksjdf78498kdfjh
   depends_on:
    - mysql0
     
@@ -20,8 +29,12 @@ services:
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  environment:
+   - cMysqlServer=mysql1
+   - cMysqlLogin=radius
+   - cMysqlPassword=lksjdf78498kdfjh
   depends_on:
-   - mysql0
+   - mysql1
 
  nginx0:
   image: "nginxfr:dev"
