@@ -13,6 +13,12 @@ RUN apk update && apk upgrade && \
     chgrp radius  /usr/sbin/radiusd && chmod g+rwx /usr/sbin/radiusd && \
     rm /var/cache/apk/*
 
+RUN set -x && \
+	apk add --update libintl && \
+	apk add --virtual build_deps gettext &&  \
+	cp /usr/bin/envsubst /usr/local/bin/envsubst && \
+	apk del build_deps
+
 #Setup for MySQL
 RUN cd /etc/raddb/mods-enabled; ln -s ../mods-available/sql sql;
 #Template becomes /etc/raddb/mods-available/sql via start.sh below
@@ -24,7 +30,6 @@ COPY ./etc/raddb/sites-available/default /etc/raddb/sites-available/default
 
 #special start up script that waits for mysql.
 COPY ./start.sh /usr/sbin/start.sh
-COPY ./mysql /usr/bin/mysql
 
 #Does not have inner-tunnel tcp port
 EXPOSE 1812/udp 1813/udp

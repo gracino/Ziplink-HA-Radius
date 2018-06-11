@@ -7,6 +7,12 @@ RUN apk update && \
 	mkdir /scripts && \
 	rm -rf /var/cache/apk/*
 
+RUN set -x && \
+	apk add --update libintl && \
+	apk add --virtual build_deps gettext &&  \
+	cp /usr/bin/envsubst /usr/local/bin/envsubst && \
+	apk del build_deps
+
 COPY ./startup.sh /scripts/startup.sh
 RUN chmod +x /scripts/startup.sh
 

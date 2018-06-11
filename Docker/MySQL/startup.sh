@@ -1,11 +1,11 @@
 #!/bin/sh
 
-#Provide defaults
+#You have to provide
 if [ "$cMysqlLogin" == "" ];then
-	cMysqlLogin="radius";
+	exit 1;
 fi
 if [ "$cMysqlPassword" == "" ];then
-	cMysqlPassword="lksjdf78498kdfjh";
+	exit 2;
 fi
 
 envsubst '${cMysqlLogin},${cMysqlPassword}' < /etc/FreeRadius/schema.sql.template > /etc/FreeRadius/schema.sql;

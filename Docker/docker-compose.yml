@@ -6,24 +6,30 @@ services:
   image: "mysqlfr:dev"
   volumes:
    - "/var/local/mysql0:/var/lib/mysql"
+  #required
+  environment:
+   - cMysqlLogin=radius0
+   - cMysqlPassword=radpasswd0
 
  mysql1:
   image: "mysqlfr:dev"
   volumes:
    - "/var/local/mysql1:/var/lib/mysql"
+  #required
   environment:
    - cMysqlLogin=radius1
-   - cMysqlPassword=radpasswd
+   - cMysqlPassword=radpasswd1
 
  freeradius0:
   image: "freeradius:dev"
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  #required
   environment:
    - cMysqlServer=mysql0
-   - cMysqlLogin=radius
-   - cMysqlPassword=lksjdf78498kdfjh
+   - cMysqlLogin=radius0
+   - cMysqlPassword=radpasswd0
   depends_on:
    - mysql0
     
@@ -32,10 +38,11 @@ services:
   volumes:
    - "./clients.conf:/etc/raddb/clients.conf"
    - "./users:/etc/raddb/users"
+  #required
   environment:
    - cMysqlServer=mysql1
    - cMysqlLogin=radius1
-   - cMysqlPassword=radpasswd
+   - cMysqlPassword=radpasswd1
   depends_on:
    - mysql1
 
