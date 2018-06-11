@@ -27,7 +27,7 @@ Ziplink high availability RADIUS project.
  1. Work on beta version. Not started.
 
 ## Production System Fix
- 1. Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
+Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
 causing MySQL subsystem to lock. VM cores  were doubled and RAM also. Production system is now stable with little i/o wait time
 and low uptime numbers.
 
