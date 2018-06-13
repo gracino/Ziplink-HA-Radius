@@ -5,10 +5,10 @@
 
 #Provide default
 if [ "$cUpstreamAuthServers" == "" ];then
-	cUpstreamAuthServers="freeradius0:1812";
+	cUpstreamAuthServers="freeradius0:1812;freeradius1:1812";
 fi
 if [ "$cUpstreamAcctServers" == "" ];then
-	cUpstreamAcctServers="freeradius1:1813";
+	cUpstreamAcctServers="freeradius1:1813;freeradius0:1813";
 fi
 
 cAuthServers=$(echo $cUpstreamAuthServers | tr ";" "\n")
@@ -18,13 +18,14 @@ echo "stream {";
 
 echo "	upstream Authentication {";
 for cServer in $cAuthServers;do
-	echo "		server $cServer;";
+	echo "		server $cServer max_fails=1 fail_timeout=1s;";
 done
 echo "	}";
 
 echo "	upstream Accounting {";
+cSecond="False";
 for cServer in $cAcctServers;do
-	echo "		server $cServer;";
+	echo "		server $cServer max_fails=1 fail_timeout=1s;";
 done
 echo "	}";
 
