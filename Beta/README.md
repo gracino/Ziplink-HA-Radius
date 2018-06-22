@@ -9,6 +9,11 @@ We will improve the Alpha Docker solution providing a production usable system. 
 run, as opposed to the Sonar MySQL DB (that coould also be a cluster) that should not be required to be functional
 for the NAS-Network to continue to operate.
 
+### Quick Status
+Started work on MySQL replication. 
+ 1. Adding MySQL Accounting and Authentication DB master server.
+ 1. Adding configuration for replication.
+
 ### Outline
 
  1. We will add the Sonar MySQL connection point. Ability to preload current production data is required.
