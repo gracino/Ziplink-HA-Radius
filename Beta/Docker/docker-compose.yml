@@ -1,0 +1,75 @@
+version: '2'
+
+services:
+
+ mysqlmaster0:
+  image: "mysqlfrmaster:dev"
+  volumes:
+   - "/var/local/mysqlmaster0:/var/lib/mysql"
+  #required
+  environment:
+   - cMysqlLogin=radius0
+   - cMysqlPassword=radpasswd0
+
+
+ mysql0:
+  image: "mysqlfr:dev"
+  volumes:
+   - "/var/local/mysql0:/var/lib/mysql"
+  #required
+  environment:
+   - cMysqlLogin=radius0
+   - cMysqlPassword=radpasswd0
+   - cMaster=mysqlmaster0
+  depends_on:
+   - mysqlmaster0
+
+ mysql1:
+  image: "mysqlfr:dev"
+  volumes:
+   - "/var/local/mysql1:/var/lib/mysql"
+  #required
+  environment:
+   - cMysqlLogin=radius1
+   - cMysqlPassword=radpasswd1
+   - cMaster=mysqlmaster0
+  depends_on:
+   - mysqlmaster0
+
+ freeradius0:
+  image: "freeradius:dev"
+  volumes:
+   - "./clients.conf:/etc/raddb/clients.conf"
+   - "./users:/etc/raddb/users"
+  #required
+  environment:
+   - cMysqlServer=mysql0
+   - cMysqlLogin=radius0
+   - cMysqlPassword=radpasswd0
+  depends_on:
+   - mysql0
+    
+ freeradius1:
+  image: "freeradius:dev"
+  volumes:
+   - "./clients.conf:/etc/raddb/clients.conf"
+   - "./users:/etc/raddb/users"
+  #required
+  environment:
+   - cMysqlServer=mysql1
+   - cMysqlLogin=radius1
+   - cMysqlPassword=radpasswd1
+  depends_on:
+   - mysql1
+
+ nginx0:
+  image: "nginxfr:dev"
+  ports:
+   - "1812:1812/udp"
+   - "1813:1813"
+  environment:
+   - cUpstreamAuthServers=freeradius0:1812;freeradius1:1812
+   - cUpstreamAcctServers=freeradius0:1813;freeradius1:1813
+  depends_on:
+   - freeradius0
+   - freeradius1
