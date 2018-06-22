@@ -24,7 +24,7 @@ Ziplink high availability RADIUS project.
  1. Review proposal for Alpha system. Pending.
  1. Approve proposal for Alpha system. Pending.
  1. Work on alpha version. Done.
- 1. Work on beta version. Started documentation.
+ 1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config.
 
 ## Production System Fix
 Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
