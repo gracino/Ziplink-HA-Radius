@@ -21,6 +21,7 @@ services:
    - cMysqlLogin=radius0
    - cMysqlPassword=radpasswd0
    - cMaster=mysqlmaster0
+   - cnUniqueServerId=1000
   depends_on:
    - mysqlmaster0
 
@@ -33,6 +34,7 @@ services:
    - cMysqlLogin=radius1
    - cMysqlPassword=radpasswd1
    - cMaster=mysqlmaster0
+   - cnUniqueServerId=2000
   depends_on:
    - mysqlmaster0
 

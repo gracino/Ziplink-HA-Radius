@@ -218,6 +218,8 @@ use mysql;
 DELETE FROM user WHERE User='';
 DELETE FROM user WHERE User='root' and Host!='localhost';
 INSERT INTO user SET Host='%',User='${cMysqlLogin}',Password=PASSWORD('${cMysqlPassword}'); 
+#only global?
+INSERT INTO user SET Host='%',User='replication_user',Password=PASSWORD('bigs3cret'),Repl_slave_priv='Y'; 
 
 #db
 #Users and permissions

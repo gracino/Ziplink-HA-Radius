@@ -7,6 +7,11 @@ fi
 if [ "$cMysqlPassword" == "" ];then
 	exit 2;
 fi
+if [ "$cnUniqueServerId" == "" ];then
+	exit 3;
+fi
+
+envsubst '${cnUniqueServerId}' < /etc/FreeRadius/my.cnf.template > /etc/mysql/my.cnf;
 
 envsubst '${cMysqlLogin},${cMysqlPassword}' < /etc/FreeRadius/schema.sql.template > /etc/FreeRadius/schema.sql;
 
