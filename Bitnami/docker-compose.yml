@@ -44,3 +44,7 @@ services:
       - cMysqlServer=mariadb-master
       - cMysqlLogin=radius
       - cMysqlPassword=radiuspasswd
+
+  dnstools:
+    image: 'dnstools:dev'
+    command: "dig mariadb-slave"

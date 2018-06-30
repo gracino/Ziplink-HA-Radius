@@ -110,3 +110,52 @@ bitnami_mariadb-slave_1    /app-entrypoint.sh /run.sh       Up       0.0.0.0:327
 +----+----------------+-------------+-------+-------+------------------+--------+-----------+-------------------------------------------+
 
 ```
+
+### Verify DNS Round Robin for Scaled-Up Services
+
+We created a simple Dockerfile for Alpine bind-tools so we can check to make sure
+that docker-compose service discovery is working as expected. It is.
+
+This should allow us to scale up MySQL servers without changing Nginx configuration.
+
+See Nginx server directive w/resolver and resolve parameter.
+
+
+```
+[root@c7docker Bitnami]# docker-compose scale mariadb-slave=2
+Starting bitnami_mariadb-slave_1 ... done
+Creating bitnami_mariadb-slave_2 ... 
+Creating bitnami_mariadb-slave_2 ... done
+[root@c7docker Bitnami]# docker-compose ps
+          Name                        Command               State             Ports          
+--------------------------------------------------------------------------------------------
+bitnami_dnstools_1         dig mariadb-slave                Exit 0                           
+bitnami_mariadb-master_1   /app-entrypoint.sh /run.sh       Up       0.0.0.0:32788->3306/tcp 
+bitnami_mariadb-setup_1    /app-entrypoint.sh /usr/lo ...   Exit 1                           
+bitnami_mariadb-slave_1    /app-entrypoint.sh /run.sh       Up       0.0.0.0:32789->3306/tcp 
+bitnami_mariadb-slave_2    /app-entrypoint.sh /run.sh       Up       0.0.0.0:32792->3306/tcp 
+
+```
+
+```
+[root@c7docker Bitnami]# docker-compose run dnstools
+
+; <<>> DiG 9.11.3 <<>> mariadb-slave
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 56852
+;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;mariadb-slave.			IN	A
+
+;; ANSWER SECTION:
+mariadb-slave.		600	IN	A	172.18.0.4
+mariadb-slave.		600	IN	A	172.18.0.3
+
+;; Query time: 0 msec
+;; SERVER: 127.0.0.11#53(127.0.0.11)
+;; WHEN: Sat Jun 30 13:31:08 UTC 2018
+;; MSG SIZE  rcvd: 89
+
+```
