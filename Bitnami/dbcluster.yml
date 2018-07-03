@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+
+  mariadb-master:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      #must chmod 775 
+      - ./data/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_ROOT_PASSWORD=master_root_password
+      - MARIADB_USER=radius
+      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_DATABASE=radius
+
+  mariadb-slave:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    depends_on:
+      - mariadb-master
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_MASTER_HOST=mariadb-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+
+  mariadb-setup:
+    image: 'bitnami/mariadb:latest'
+    depends_on:
+      - mariadb-slave
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+    volumes:
+      - ./start.sh:/usr/local/sbin/start.sh
+      - ./setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=mariadb-master
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+
+#How to use
+#docker stack deploy --compose-file dbcluster.yml dbcluster

@@ -27,3 +27,4 @@ done
 
 #Now we can setup the master
 /opt/bitnami/mariadb/bin/mysql -h $cMysqlServer -u$cMysqlLogin -p$cMysqlPassword radius < /tmp/setup.sql
+exit 0;
