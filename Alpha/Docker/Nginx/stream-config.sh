@@ -5,10 +5,10 @@
 
 #Provide default
 if [ "$cUpstreamAuthServers" == "" ];then
-	cUpstreamAuthServers="freeradius0:1812;freeradius1:1812";
+	cUpstreamAuthServers="auth-freeradius:1812;auth-freeradius:1812";
 fi
 if [ "$cUpstreamAcctServers" == "" ];then
-	cUpstreamAcctServers="freeradius1:1813;freeradius0:1813";
+	cUpstreamAcctServers="acct-freeradius:1813;acct-freeradius:1813";
 fi
 
 cAuthServers=$(echo $cUpstreamAuthServers | tr ";" "\n")

@@ -39,8 +39,8 @@
 #       DB clusters: OK.
 #       phpmyadmin: OK.  w/LetsEncrypt Cert OK.
 #       swarm visualizer: OK.
-#       FreeRADIUS
-#       Nginx FreeRADIUS front-end
+#       FreeRADIUS: OK.
+#       Nginx FreeRADIUS front-end:
 #
 #TODO
 #       named volumes.
@@ -280,6 +280,32 @@ services:
           - node.role == worker
   #
   #FreeRADIUS Authentication end
+  #
+  #
+  
+  #
+  #
+  #Nginx loadbalancer HA front-end start
+  #
+  nginx0:
+    image: "docker0.unxs.io:5000/nginxfr:dev"
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    environment:
+      - cUpstreamAuthServers=auth-freeradius:1812;auth-freeradius:1812
+      - cUpstreamAcctServers=acct-freeradius:1813;acct-freeradius:1813
+    depends_on:
+      - acct-freeradius
+      - auth-freeradius
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #Nginx loadbalancer HA front-end end
   #
   #
     
