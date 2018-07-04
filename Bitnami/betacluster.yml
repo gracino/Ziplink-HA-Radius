@@ -1,0 +1,193 @@
+#
+#FILE
+#	betacluster.yml
+#PURPOSE
+#	Development FreeRADIUS w/MariaDB master-slave backend and Nginx frontend.
+#DETAILS
+#	We are trying to build a flexible HA RADIUS server that
+#	will scale well and allow for 1/3 three nodes to go down with no
+#	impact.
+#
+#ARCHITECTURE
+#	Nginx is the frontend load balancer for all RADIUS UDP traffic.
+#
+#	Nginx routes to healthy FreeRadius instances 1812 and 1813 traffic.
+#
+#	The FreeRadius instances are divided in to two services Accounting and Authorization.
+#
+#	Each group of FreeRadius instances connect to two groups of DB instances. One for
+#	accounting and another for authorization data. This will allow for complete
+#	separation of DB load and storage issues affecting the other RADIUS functionality.
+#
+#	Administration of dynamic RADIUS data is done via the master DB.
+#	We will provide a phpmyadmin container for monitoring and system admin.
+#
+#	Collection (aggregation) of RADIUS accounting data is required,
+#	since the load balancer may assign the data to one or more FreeRADIUS accounting
+#	instances (port 1813). This will be added later or done by an external system for
+#	better HA.
+#
+#WORK IN PROGRESS
+#       DB clusters: OK.
+#       TODO LetsEncrypt Cert
+#       TODO named volumes.
+#
+#
+
+
+version: '3'
+
+services:
+  
+  #
+  #Authentication DB cluster start
+  #
+  #
+  authdb-master:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      - ./data/auth/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_ROOT_PASSWORD=master_root_password
+      - MARIADB_USER=radius
+      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_DATABASE=radius
+
+  authdb-slave:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    depends_on:
+      - authdb-master
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_MASTER_HOST=authdb-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+
+  authdb-setup:
+    image: 'bitnami/mariadb:latest'
+    depends_on:
+      - authdb-slave #indirect since it has to wait on authdb-master
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+    volumes:
+      - ./auth-start.sh:/usr/local/sbin/start.sh
+      - ./auth-setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=authdb-master
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+  #
+  #
+  #Authentication DB cluster end
+  #
+
+  #
+  #Accounting DB cluster end
+  #
+  #
+  acctdb-master:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      - ./data/acct/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_ROOT_PASSWORD=master_root_password
+      - MARIADB_USER=radius
+      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_DATABASE=radius
+
+  acctdb-slave:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - '3306'
+    depends_on:
+      - acctdb-master
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_MASTER_HOST=acctdb-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+
+  acctdb-setup:
+    image: 'bitnami/mariadb:latest'
+    depends_on:
+      - acctdb-slave #indirect since it has to wait on acctdb-master
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+    volumes:
+      - ./acct-start.sh:/usr/local/sbin/start.sh
+      - ./acct-setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=acctdb-master
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+  #
+  #
+  #Accounting DB cluster end
+  #
+
+  #
+  #
+  #phpmyadmin Multi purpose DB admin tool w/nginx-ssl start
+  #
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+     - PMA_ARBITRARY=1
+
+  #
+  #
+  #phpmyadmin end
+  #
+
+#How to use
+#docker stack deploy --compose-file betacluster.yml betacluster
