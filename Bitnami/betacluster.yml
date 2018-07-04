@@ -26,11 +26,24 @@
 #	since the load balancer may assign the data to one or more FreeRADIUS accounting
 #	instances (port 1813). This will be added later or done by an external system for
 #	better HA.
+#DATA PERSISTENCE
+#       TODO via named volumes
+#       /data/freeradius/ files must exist on all nodes
+#       /data/letsencrypt/ files must exit on all manager nodes
+#       /data/nginx/ files must exit on all manager nodes
+#       /data/auth/ files must exit on all manager nodes
+#       /data/acct/ files must exit on all manager nodes
+#
 #
 #WORK IN PROGRESS
 #       DB clusters: OK.
-#       TODO LetsEncrypt Cert
-#       TODO named volumes.
+#       phpmyadmin: OK.  w/LetsEncrypt Cert OK.
+#       swarm visualizer: OK.
+#       FreeRADIUS
+#       Nginx FreeRADIUS front-end
+#
+#TODO
+#       named volumes.
 #
 #
 
@@ -172,8 +185,8 @@ services:
   #
 
   #
-  #
   #phpmyadmin Multi purpose DB admin tool w/nginx-ssl start
+  #
   #
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -181,6 +194,14 @@ services:
       placement:
         constraints:
           - node.role == manager
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      #certs generated on manager via get-ssl.sh and renew-ssl.sh via cron
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./nginx.conf:/etc/nginx.conf
+      - /usr/share/nginx/html:/usr/share/nginx/html
     environment:
      - PMA_ARBITRARY=1
 
@@ -189,5 +210,78 @@ services:
   #phpmyadmin end
   #
 
+  #
+  #
+  #Docker visualizer start
+  #
+  viz:
+    image: dockersamples/visualizer
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - '32712:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    
+  
+  #
+  #Docker visualizer end
+  #
+  #
+  
+  #
+  #
+  #FreeRADIUS Accounting start
+  #
+  acct-freeradius:
+    image: "docker0.unxs.io:5000/freeradius:dev"
+    volumes:
+      - "/data/freeradius/clients.conf:/etc/raddb/clients.conf"
+      - "/data/freeradius/users:/etc/raddb/users"
+    environment:
+      - cMysqlServer=acctdb-slave
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+    depends_on:
+      - acctdb-slave
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #FreeRADIUS Accounting end
+  #
+  #
+
+  #
+  #
+  #FreeRADIUS Authentication start
+  #
+  auth-freeradius:
+    image: "docker0.unxs.io:5000/freeradius:dev"
+    volumes:
+      - "/data/freeradius/clients.conf:/etc/raddb/clients.conf"
+      - "/data/freeradius/users:/etc/raddb/users"
+    environment:
+      - cMysqlServer=authdb-slave
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+    depends_on:
+      - authdb-slave
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #FreeRADIUS Authentication end
+  #
+  #
+    
 #How to use
-#docker stack deploy --compose-file betacluster.yml betacluster
+#docker stack deploy --compose-file betacluster.yml betacluster --with-registry-auth
