@@ -1,6 +1,11 @@
 FROM nginx:alpine
 MAINTAINER Gary Wallis "docker@unxs.io"
 
+#Add dig for DNS debug
+RUN apk update && apk upgrade && \
+    apk add --update bind-tools && \
+    rm /var/cache/apk/*
+
 #FreeRadius with ENV configured stream section
 # E.g.:
 # export cUpstreamAuthServers="server1:1812;server2:1812;server3:1812";

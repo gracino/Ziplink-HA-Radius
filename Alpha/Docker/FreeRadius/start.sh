@@ -28,4 +28,5 @@ while [ $cStatus == "Fail" ]; do
   fi
 done
 
+sleep 3;
 /usr/sbin/radiusd -X -f;
