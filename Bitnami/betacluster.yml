@@ -57,9 +57,7 @@ services:
   #
   #
   authdb-master:
-    image: 'bitnami/mariadb:latest'
-    ports:
-      - '3306'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     deploy:
       placement:
         constraints:
@@ -76,9 +74,7 @@ services:
       - MARIADB_DATABASE=radius
 
   authdb-slave:
-    image: 'bitnami/mariadb:latest'
-    #ports:
-    #  - '3306'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
       - authdb-master
     deploy:
@@ -97,7 +93,7 @@ services:
       - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
 
   authdb-setup:
-    image: 'bitnami/mariadb:latest'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
       - authdb-slave #indirect since it has to wait on authdb-master
     deploy:
@@ -124,9 +120,7 @@ services:
   #
   #
   acctdb-master:
-    image: 'bitnami/mariadb:latest'
-    ports:
-      - '3306'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     deploy:
       placement:
         constraints:
@@ -143,9 +137,7 @@ services:
       - MARIADB_DATABASE=radius
 
   acctdb-slave:
-    image: 'bitnami/mariadb:latest'
-    #ports:
-    #  - '3306'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
       - acctdb-master
     deploy:
@@ -164,7 +156,7 @@ services:
       - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
 
   acctdb-setup:
-    image: 'bitnami/mariadb:latest'
+    image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
       - acctdb-slave #indirect since it has to wait on acctdb-master
     deploy:
