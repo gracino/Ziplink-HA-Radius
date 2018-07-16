@@ -153,3 +153,24 @@ CREATE TABLE nas (
   PRIMARY KEY (id),
   KEY nasname (nasname)
 );
+
+INSERT INTO `nas` VALUES (1,'71.42.155.65','HAS','other',NULL,'j2qksrv0hsiwnm6v',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (2,'67.79.11.167','AlconOffice','other',NULL,'eyr1u3gowkgfn60g',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (3,'104.218.76.65','SDWT','other',NULL,'kcesnjdmllzndx0s',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (4,'38.103.213.193','PICOSA','other',NULL,'z22k53nd9m3cdv5f',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (5,'104.218.77.161','CCR181','other',NULL,'5fm0ubmb82a0jhws',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (6,'71.40.111.65','SLAV','other',NULL,'ijb0k4fnhke4wwef',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (9,'71.40.111.145','WYNN','other',NULL,'9u1fgljb1qi8pj1s',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (11,'71.42.155.97','OHWT','other',NULL,'x54u090de2th0qym',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (12,'38.103.213.225','BeckmanMP','other',NULL,'kg3j4c4ri8wd5v02',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (13,'148.59.236.129','Trailcrest','other',NULL,'by358k7wn4zoju4c',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (15,'71.40.111.177','Bynum','other',NULL,'54ykrjzc9w9mjfyx',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (16,'71.40.111.217','POTH','other',NULL,'g9wvvp5uhnszs6ir',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (17,'71.40.111.241','SBA','other',NULL,'gx1ulbvseumwyoes',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (18,'71.40.111.97','Ksat','other',NULL,'9dh11yxa399rehg0',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (19,'71.40.111.161','RUMC','other',NULL,'819dh05g3g4q2smr',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (20,'71.40.111.33','GRAMS','other',NULL,'rcpwv0ckc4c08w8d',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+INSERT INTO `nas` VALUES (21,'71.40.111.1','FVtwr','other',NULL,'l4lilowurr63zuvm',NULL,NULL,'Added via the Sonar FreeRADIUS Genie tool');
+
+#this is required for start.sh
+INSERT INTO `radreply` VALUES (2,'Sonar_1170712','Framed-IP-Address','=','10.9.15.185');

@@ -280,3 +280,36 @@ mariadb-slave.		600	IN	A	172.18.0.3
 ;; MSG SIZE  rcvd: 89
 
 ```
+
+## Beta Cluster Testing
+
+We created a working ```docker stack``` betacluster.yml file. This requires late ce version of docker engine.
+
+We have included MySQL admin control panel and the Docker Visualizer control panel for monitoring.
+
+See ```betacluster.yml``` for complete notes on how it was setup.
+
+Note that radius.unxs.io has three A records one for each Docker Swarm node.
+
+### Manual Testing
+
+Works fine but from any IP. This is probably due to clients.conf errors in FreeRADIUS container.
+
+```
+[root@c7docker Bitnami]# docker run docker0.unxs.io:5000/freeradius:dev radtest Sonar_1170982 AF745JB6L75P radius.unxs.io 0 SECRET
+Sent Access-Request Id 199 from 0.0.0.0:41499 to 69.61.19.18:1812 length 83
+	User-Name = "Sonar_1170982"
+	User-Password = "AF745JB6L75P"
+	NAS-IP-Address = 172.17.0.2
+	NAS-Port = 0
+	Message-Authenticator = 0x00
+	Cleartext-Password = "AF745JB6L75P"
+Received Access-Accept Id 199 from 69.61.19.18:1812 to 0.0.0.0:0 length 20
+```
+
+```
+[root@c7docker Bitnami]# docker run --volume /home/vagrant/Ziplink-HA-Radius/Alpha/Docker/acct.start:/etc/raddb/acct.start docker0.unxs.io:5000/freeradius:dev radclient -f /etc/raddb/acct.start radius.unxs.io acct SECRET
+Sent Accounting-Request Id 14 from 0.0.0.0:40824 to 69.61.19.21:1813 length 101
+Received Accounting-Response Id 14 from 69.61.19.21:1813 to 0.0.0.0:0 length 20
+
+```
