@@ -1,0 +1,319 @@
+#
+#FILE
+#	digitalocean.yml based on betacluster.yml
+#DETAILS
+#	We are trying to build a flexible HA RADIUS server that
+#	will scale well and allow for 1/3 three nodes to go down with no
+#	impact.
+#
+#ARCHITECTURE
+#	Nginx is the frontend load balancer for all RADIUS UDP traffic.
+#
+#	Nginx routes to healthy FreeRadius instances 1812 and 1813 traffic.
+#
+#	The FreeRadius instances are divided in to two services Accounting and Authorization.
+#
+#	Each group of FreeRadius instances connect to two groups of DB instances. One for
+#	accounting and another for authorization data. This will allow for complete
+#	separation of DB load and storage issues affecting the other RADIUS functionality.
+#
+#	Administration of dynamic RADIUS data is done via the master DB.
+#	We will provide a phpmyadmin container for monitoring and system admin.
+#
+#	Collection (aggregation) of RADIUS accounting data is required,
+#	since the load balancer may assign the data to one or more FreeRADIUS accounting
+#	instances (port 1813). This will be added later or done by an external system for
+#	better HA.
+#DATA PERSISTENCE
+#       See and run mknodedirs.sh on master node at initial setup
+#
+#      - /data/authdb-master/bitnami:/bitnami
+#
+#      - /data/authdb-setup/auth-start.sh:/usr/local/sbin/start.sh
+#      - /data/authdb-setup/auth-setup.sql:/tmp/setup.sql
+#
+#      - /data/acctdb-master/bitnami:/bitnami
+#
+#      - /data/acctdb-setup/acct-start.sh:/usr/local/sbin/start.sh
+#      - /data/acctdb-setup/acct-setup.sql:/tmp/setup.sql
+#
+#      - /data/letsencrypt:/etc/letsencrypt
+#      - /data/nginx/html:/usr/share/nginx/html
+#      - /data/phpmyadmin/nginx.conf:/etc/nginx.conf
+#
+#      - /data/freeradius/clients.conf:/etc/raddb/clients.conf
+#      - /data/freeradius/users:/etc/raddb/users
+#
+#
+#WORK IN PROGRESS
+#       DB clusters: OK.
+#       phpmyadmin: OK.  w/LetsEncrypt Cert OK.
+#       swarm visualizer: OK.
+#       FreeRADIUS: OK.
+#       Nginx FreeRADIUS front-end: Ok
+#
+#TODO
+#       named volumes.
+#
+#
+
+
+version: '3.3'
+
+services:
+  
+  #
+  #Authentication DB cluster start
+  #
+  #
+  authdb-master:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      - /data/authdb-master/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_ROOT_PASSWORD=master_root_password
+      - MARIADB_USER=radius
+      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_DATABASE=radius
+
+  authdb-slave:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    depends_on:
+      - authdb-master
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_MASTER_HOST=authdb-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+
+  authdb-setup:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    depends_on:
+      - authdb-slave #indirect since it has to wait on authdb-master
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+    volumes:
+      - /data/authdb-setup/auth-start.sh:/usr/local/sbin/start.sh
+      - /data/authdb-setup/auth-setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=authdb-master
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+  #
+  #
+  #Authentication DB cluster end
+  #
+
+  #
+  #Accounting DB cluster end
+  #
+  #
+  acctdb-master:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      - /data/acctdb-master/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_ROOT_PASSWORD=master_root_password
+      - MARIADB_USER=radius
+      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_DATABASE=radius
+
+  acctdb-slave:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    depends_on:
+      - acctdb-master
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_MASTER_HOST=acctdb-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+
+  acctdb-setup:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    depends_on:
+      - acctdb-slave #indirect since it has to wait on acctdb-master
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: none
+    volumes:
+      - /data/acctdb-setup/acct-start.sh:/usr/local/sbin/start.sh
+      - /data/acctdb-setup/acct-setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=acctdb-master
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+  #
+  #
+  #Accounting DB cluster end
+  #
+
+  #
+  #phpmyadmin Multi purpose DB admin tool w/nginx-ssl start
+  #
+  #
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      #certs generated on manager via get-ssl.sh and renew-ssl.sh via cron
+      - /data/letsencrypt:/etc/letsencrypt
+      - /data/phpmyadmin/nginx.conf:/etc/nginx.conf
+      - /data/nginx/html:/usr/share/nginx/html
+    environment:
+     - PMA_ARBITRARY=1
+
+  #
+  #
+  #phpmyadmin end
+  #
+
+  #
+  #
+  #Docker visualizer start
+  #
+  viz:
+    image: dockersamples/visualizer
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - '32712:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    
+  
+  #
+  #Docker visualizer end
+  #
+  #
+  
+  #
+  #
+  #FreeRADIUS Accounting start
+  #
+  acct-freeradius:
+    image: "docker0.unxs.io:5000/freeradius:dev"
+    volumes:
+      - /data/freeradius/clients.conf:/etc/raddb/clients.conf
+      - /data/freeradius/users:/etc/raddb/users
+    environment:
+      - cMysqlServer=acctdb-slave
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+    depends_on:
+      - acctdb-slave
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #FreeRADIUS Accounting end
+  #
+  #
+
+  #
+  #
+  #FreeRADIUS Authentication start
+  #
+  auth-freeradius:
+    image: "docker0.unxs.io:5000/freeradius:dev"
+    volumes:
+      - /data/freeradius/clients.conf:/etc/raddb/clients.conf
+      - /data/freeradius/users:/etc/raddb/users
+    environment:
+      - cMysqlServer=authdb-slave
+      - cMysqlLogin=radius
+      - cMysqlPassword=radiuspasswd
+    depends_on:
+      - authdb-slave
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #FreeRADIUS Authentication end
+  #
+  #
+  
+  #
+  #
+  #Nginx loadbalancer HA front-end start
+  #
+  nginxfr:
+    image: "docker0.unxs.io:5000/nginxfr:dev"
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    environment:
+      - cUpstreamAuthServers=auth-freeradius:1812;auth-freeradius:1812
+      - cUpstreamAcctServers=acct-freeradius:1813;acct-freeradius:1813
+    depends_on:
+      - acct-freeradius
+      - auth-freeradius
+    deploy:
+      mode: replicated
+      replicas: 2 
+      placement:
+        constraints:
+          - node.role == worker
+  #
+  #Nginx loadbalancer HA front-end end
+  #
+  #
+    
+#How to use
+#docker stack deploy --compose-file digitalocean.yml radiuscluster --with-registry-auth
