@@ -17,8 +17,11 @@ if [ "$2" == "--deleteall" ];then
 fi
 
 mkdir -p /data/authdb-master/bitnami
+chmod 775 /data/authdb-master/bitnami
+
 
 mkdir -p /data/acctdb-master/bitnami
+chmod 775 /data/acctdb-master/bitnami
 
 mkdir -p /data/authdb-setup
 

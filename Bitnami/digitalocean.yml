@@ -54,6 +54,11 @@
 #
 #TODO
 #       named volumes.
+#NOTES
+#       Administration should be done via node IP directly. Or another VIP.
+#       normally on radius-ha1 (radius1).
+#       Better performance will be achieved if we have radius.ziplinknet.com running on
+#       radius2 or radius3.
 #
 #
 
@@ -77,11 +82,13 @@ services:
     environment:
       - MARIADB_REPLICATION_MODE=master
       - MARIADB_REPLICATION_USER=repl_user
-      - MARIADB_REPLICATION_PASSWORD=repl_password
-      - MARIADB_ROOT_PASSWORD=master_root_password
-      - MARIADB_USER=radius
-      - MARIADB_PASSWORD=radiuspasswd
+      - MARIADB_REPLICATION_PASSWORD=64f07c48f0
+      - MARIADB_ROOT_PASSWORD=64f07c48f0
+      - MARIADB_USER=5xyrwi8yoyet5t7p
+      - MARIADB_PASSWORD=smusadfwd9wzt59o
       - MARIADB_DATABASE=radius
+    ports:
+      - '3306:3306'
 
   authdb-slave:
     image: 'docker0.unxs.io:5000/mariadb:dev'
@@ -97,10 +104,10 @@ services:
     environment:
       - MARIADB_REPLICATION_MODE=slave
       - MARIADB_REPLICATION_USER=repl_user
-      - MARIADB_REPLICATION_PASSWORD=repl_password
+      - MARIADB_REPLICATION_PASSWORD=64f07c48f0
       - MARIADB_MASTER_HOST=authdb-master
       - MARIADB_MASTER_PORT_NUMBER=3306
-      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+      - MARIADB_MASTER_ROOT_PASSWORD=64f07c48f0
 
   authdb-setup:
     image: 'docker0.unxs.io:5000/mariadb:dev'
@@ -116,40 +123,42 @@ services:
       - /data/authdb-setup/auth-start.sh:/usr/local/sbin/start.sh
       - /data/authdb-setup/auth-setup.sql:/tmp/setup.sql
     command: "/usr/local/sbin/start.sh"
+    #has to have same login and password as BITNAMI
     environment:
       - cMysqlServer=authdb-master
-      - cMysqlLogin=radius
-      - cMysqlPassword=radiuspasswd
+      - cMysqlLogin=5xyrwi8yoyet5t7p
+      - cMysqlPassword=smusadfwd9wzt59o
   #
   #
   #Authentication DB cluster end
   #
 
   #
-  #Accounting DB cluster end
+  #Accounting DB cluster start
   #
   #
-  acctdb-master:
-    image: 'docker0.unxs.io:5000/mariadb:dev'
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-    volumes:
-      - /data/acctdb-master/bitnami:/bitnami
-    environment:
-      - MARIADB_REPLICATION_MODE=master
-      - MARIADB_REPLICATION_USER=repl_user
-      - MARIADB_REPLICATION_PASSWORD=repl_password
-      - MARIADB_ROOT_PASSWORD=master_root_password
-      - MARIADB_USER=radius
-      - MARIADB_PASSWORD=radiuspasswd
-      - MARIADB_DATABASE=radius
+
+  ##acctdb-master:
+  ##  image: 'docker0.unxs.io:5000/mariadb:dev'
+  ##  deploy:
+  ##    placement:
+  ##      constraints:
+  ##        - node.role == manager
+  ##  volumes:
+  ##    - /data/acctdb-master/bitnami:/bitnami
+  ##  environment:
+  ##    - MARIADB_REPLICATION_MODE=master
+  ##    - MARIADB_REPLICATION_USER=repl_user
+  ##    - MARIADB_REPLICATION_PASSWORD=64f07c48f0
+  ##    - MARIADB_ROOT_PASSWORD=64f07c48f0
+  ##    - MARIADB_USER=5xyrwi8yoyet5t7p
+  ##    - MARIADB_PASSWORD=smusadfwd9wzt59o
+  ##    - MARIADB_DATABASE=radius
 
   acctdb-slave:
     image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
-      - acctdb-master
+      - authdb-master
     deploy:
       mode: replicated
       replicas: 2
@@ -160,29 +169,30 @@ services:
     environment:
       - MARIADB_REPLICATION_MODE=slave
       - MARIADB_REPLICATION_USER=repl_user
-      - MARIADB_REPLICATION_PASSWORD=repl_password
-      - MARIADB_MASTER_HOST=acctdb-master
+      - MARIADB_REPLICATION_PASSWORD=64f07c48f0
+      - MARIADB_MASTER_HOST=authdb-master
       - MARIADB_MASTER_PORT_NUMBER=3306
-      - MARIADB_MASTER_ROOT_PASSWORD=master_root_password
+      - MARIADB_MASTER_ROOT_PASSWORD=64f07c48f0
 
-  acctdb-setup:
-    image: 'docker0.unxs.io:5000/mariadb:dev'
-    depends_on:
-      - acctdb-slave #indirect since it has to wait on acctdb-master
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: none
-    volumes:
-      - /data/acctdb-setup/acct-start.sh:/usr/local/sbin/start.sh
-      - /data/acctdb-setup/acct-setup.sql:/tmp/setup.sql
-    command: "/usr/local/sbin/start.sh"
-    environment:
-      - cMysqlServer=acctdb-master
-      - cMysqlLogin=radius
-      - cMysqlPassword=radiuspasswd
+  ##acctdb-setup:
+  ##  image: 'docker0.unxs.io:5000/mariadb:dev'
+  ##  depends_on:
+  ##    - acctdb-slave #indirect since it has to wait on authdb-master
+  ##  deploy:
+  ##    placement:
+  ##      constraints:
+  ##        - node.role == manager
+  ##    restart_policy:
+  ##      condition: none
+  ##  volumes:
+  ##    - /data/acctdb-setup/acct-start.sh:/usr/local/sbin/start.sh
+  ##    - /data/acctdb-setup/acct-setup.sql:/tmp/setup.sql
+  ##  command: "/usr/local/sbin/start.sh"
+  ##  environment:
+  ##    - cMysqlServer=acctdb-master
+  ##    - cMysqlLogin=5xyrwi8yoyet5t7p
+  ##    - cMysqlPassword=smusadfwd9wzt59o
+
   #
   #
   #Accounting DB cluster end
@@ -246,8 +256,8 @@ services:
       - /data/freeradius/users:/etc/raddb/users
     environment:
       - cMysqlServer=acctdb-slave
-      - cMysqlLogin=radius
-      - cMysqlPassword=radiuspasswd
+      - cMysqlLogin=root
+      - cMysqlPassword=64f07c48f0
     depends_on:
       - acctdb-slave
     deploy:
@@ -273,8 +283,8 @@ services:
       - /data/freeradius/users:/etc/raddb/users
     environment:
       - cMysqlServer=authdb-slave
-      - cMysqlLogin=radius
-      - cMysqlPassword=radiuspasswd
+      - cMysqlLogin=root
+      - cMysqlPassword=64f07c48f0
     depends_on:
       - authdb-slave
     deploy:
