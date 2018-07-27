@@ -267,6 +267,9 @@ services:
       placement:
         constraints:
           - node.role == worker
+    options:
+      max-size: "200k"
+      max-file: "2"
   #
   #FreeRADIUS Accounting end
   #
@@ -294,6 +297,9 @@ services:
       placement:
         constraints:
           - node.role == worker
+    options:
+      max-size: "200k"
+      max-file: "2"
   #
   #FreeRADIUS Authentication end
   #

@@ -19,7 +19,7 @@ envsubst '${cMysqlServer},${cMysqlLogin},${cMysqlPassword}' < /etc/raddb/sql.tem
 cStatus="Fail";
 cReturn="";
 while [ $cStatus == "Fail" ]; do
-  cReturn=`/usr/bin/mysql -B -N -h $cMysqlServer -u$cMysqlLogin -p$cMysqlPassword radius -e 'select id from radreply where id=2'|head -n 1`;
+  cReturn=`/usr/bin/mysql -B -N -h $cMysqlServer -u$cMysqlLogin -p$cMysqlPassword radius -e 'SELECT "2"'|head -n 1`;
   if [ "$?" == "0" ] && [ "$cReturn" == "2" ];then
     cStatus="Ok";
   else
