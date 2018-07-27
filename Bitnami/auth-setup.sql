@@ -2,6 +2,10 @@
 
 USE radius;
 
+CREATE TABLE identity (
+  hostname varchar(64) NOT NULL default 'unknown',
+  function varchar(64) NOT NULL default 'auth'
+);
 
 ###########################################################################
 # $Id: ca5ac77aa03dbb86ef714d1a1af647f7e63fda00 $                 #
