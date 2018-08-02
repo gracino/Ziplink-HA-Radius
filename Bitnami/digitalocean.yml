@@ -7,10 +7,6 @@
 #	impact.
 #
 #ARCHITECTURE
-#	Nginx is the frontend load balancer for all RADIUS UDP traffic.
-#
-#	Nginx routes to healthy FreeRadius instances 1812 and 1813 traffic.
-#
 #	The FreeRadius instances are divided in to two services Accounting and Authorization.
 #
 #	Each group of FreeRadius instances connect to two groups of DB instances. One for
@@ -250,6 +246,13 @@ services:
   #FreeRADIUS Accounting start
   #
   acct-freeradius:
+    #ports:
+    #  - "1813:1813/udp"
+    ports:
+      - target: 1813
+        published: 1813
+        protocol: udp
+        mode: host
     image: "docker0.unxs.io:5000/freeradius:dev"
     volumes:
       - /data/freeradius/clients.conf:/etc/raddb/clients.conf
@@ -263,7 +266,7 @@ services:
     deploy:
       mode: replicated
       replicas: 2
-      endpoint_mode: dnsrr
+      #endpoint_mode: dnsrr
       placement:
         constraints:
           - node.role == worker
@@ -283,6 +286,14 @@ services:
   #
   auth-freeradius:
     image: "docker0.unxs.io:5000/freeradius:dev"
+    #ports:
+    #  - "1812:1812/udp"
+    ports:
+      - target: 1812
+        published: 1812
+        protocol: udp
+        mode: host
+    image: "docker0.unxs.io:5000/freeradius:dev"
     volumes:
       - /data/freeradius/clients.conf:/etc/raddb/clients.conf
       - /data/freeradius/users:/etc/raddb/users
@@ -295,7 +306,7 @@ services:
     deploy:
       mode: replicated
       replicas: 2
-      endpoint_mode: dnsrr
+      #endpoint_mode: dnsrr
       placement:
         constraints:
           - node.role == worker
@@ -309,31 +320,31 @@ services:
   #
   #
   
-  #
-  #
-  #Nginx loadbalancer HA front-end start
-  #
-  nginxfr:
-    image: "docker0.unxs.io:5000/nginxfr:dev"
-    ports:
-      - "1812:1812/udp"
-      - "1813:1813/udp"
-    environment:
-      - cUpstreamAuthServers=auth-freeradius:1812;auth-freeradius:1812
-      - cUpstreamAcctServers=acct-freeradius:1813;acct-freeradius:1813
-    depends_on:
-      - acct-freeradius
-      - auth-freeradius
-    deploy:
-      mode: replicated
-      replicas: 2 
-      placement:
-        constraints:
-          - node.role == worker
-  #
-  #Nginx loadbalancer HA front-end end
-  #
-  #
+  ##
+  ##
+  ##Nginx loadbalancer HA front-end start
+  ##
+  #nginxfr:
+  #  image: "docker0.unxs.io:5000/nginxfr:dev"
+  #  ports:
+  #    - "1812:1812/udp"
+  #    - "1813:1813/udp"
+  #  environment:
+  #    - cUpstreamAuthServers=auth-freeradius:1812;auth-freeradius:1812
+  #    - cUpstreamAcctServers=acct-freeradius:1813;acct-freeradius:1813
+  #  depends_on:
+  #    - acct-freeradius
+  #    - auth-freeradius
+  #  deploy:
+  #    mode: replicated
+  #    replicas: 2 
+  #    placement:
+  #      constraints:
+  #        - node.role == worker
+  ##
+  ##Nginx loadbalancer HA front-end end
+  ##
+  ##
     
 #How to use
 #docker stack deploy --compose-file digitalocean.yml radiuscluster --with-registry-auth
