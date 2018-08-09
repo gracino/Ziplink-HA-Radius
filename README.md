@@ -45,7 +45,28 @@ I suspect Sonar talks to MySQL as that is the db that holds the custome info. Ye
 
 The NAS also reports PPPoE address assigned to CPE and data using that traverses the PPPoE tunnel. That goes back into Sonar.
 
-### Server Info
+## Server Info
+
+### Current Production
 
  1. 198.199.73.88: 64f07c48f0d6e148^
- 
+
+### Digital Ocean New Production Cluster
+
+```
+ Droplet Name: Radius-HA1
+	IP Address: 204.48.26.116:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+
+Droplet Name: Radius-HA2
+	IP Address: 167.99.6.83:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+
+Droplet Name: Radius-HA3
+	IP Address: 167.99.1.164:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+```
+
