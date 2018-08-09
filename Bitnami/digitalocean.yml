@@ -16,10 +16,11 @@
 #	Administration of dynamic RADIUS data is done via the master DB.
 #	We will provide a phpmyadmin container for monitoring and system admin.
 #
-#	Collection (aggregation) of RADIUS accounting data is required,
-#	since the load balancer may assign the data to one or more FreeRADIUS accounting
-#	instances (port 1813). This will be added later or done by an external system for
-#	better HA.
+#	Collection (aggregation) of RADIUS accounting data is required since
+#	there will be at least two acctdb-slave servers via RRDNS.
+#	The docker aggregate container will do this as long as
+#	at least one acctdb-slave servers exists.
+#
 #DATA PERSISTENCE
 #       See and run mknodedirs.sh on master node at initial setup
 #
@@ -345,6 +346,30 @@ services:
   ##Nginx loadbalancer HA front-end end
   ##
   ##
-    
+  
+  #
+  #
+  #Accounting Agregation start
+  #
+  
+  aggregate:
+    image: "docker0.unxs.io:5000/aggregate:dev"  
+    environment:
+      - cMysqlServer=acctdb-slave
+      - cMysqlLogin=root
+      - cMysqlPassword=64f07c48f0
+    depends_on:
+      - acct-freeradius
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+ #
+ #Accounting Agregation end
+ #
+ #
+
+
 #How to use
 #docker stack deploy --compose-file digitalocean.yml radiuscluster --with-registry-auth

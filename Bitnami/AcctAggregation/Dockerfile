@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-RUN apk add --no-cache dcron bash gawk sed grep bc coreutils mysql-client
+RUN apk add --no-cache dcron bash gawk sed grep bc coreutils mysql-client bind-tools
 
 ADD execute /usr/bin/
 ADD entrypoint.sh /
