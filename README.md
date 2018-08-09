@@ -4,11 +4,11 @@ Ziplink high availability RADIUS project.
 ## Summary System Description From Job Messages
 
  1. Sonar is used as source of all customer authentication. 3k customers.
- 2. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?)
- 3. New RADIUS server exists. Not finished. 
- 4. HA setup should be architected.
- 5. Sonar "talks" to only one RADIUS server. (Does it? Or does it talk to MySQL?)
- 6. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS.
+ 1. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?) This was solved by fixing DB performance.
+ 1. HA setup should be architected. Has been with Docker swarm.
+ 1. Sonar "talks" to only one DB.
+ 1. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS. We will use PHPMyAdmin
+ to add NASs via copy. edit and insert in the nas table.
 
 ### References
 
@@ -19,12 +19,14 @@ Ziplink high availability RADIUS project.
 ## Summary Roadmap
  1. Survey current system. Done.
  1. Document current system. Done.
- 1. Meeting with stakeholders. Pending. Recommend before beta work starts.
+ 1. Meeting with stakeholders. Done.
  1. Work on proposal. Done for current manual failover production system.
- 1. Review proposal for Alpha system. Pending.
- 1. Approve proposal for Alpha system. Pending.
+ 1. Review proposal for Alpha system. Done.
+ 1. Approve proposal for Alpha system. Done.
  1. Work on alpha version. Done.
- 1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config.
+ 1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config. Done.
+ 1. Testing Bitnami based beta version. Ok.
+ 1. Developing aggregation container. Work in progress.
 
 ## Production System Fix
 Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
@@ -43,7 +45,37 @@ I suspect Sonar talks to MySQL as that is the db that holds the custome info. Ye
 
 The NAS also reports PPPoE address assigned to CPE and data using that traverses the PPPoE tunnel. That goes back into Sonar.
 
-### Server Info
+## Server Info
+
+### Current Production
 
  1. 198.199.73.88: 64f07c48f0d6e148^
- 
+
+### Digital Ocean New Production Cluster
+
+```
+ Droplet Name: Radius-HA1
+	IP Address: 204.48.26.116:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+
+Droplet Name: Radius-HA2
+	IP Address: 167.99.6.83:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+
+Droplet Name: Radius-HA3
+	IP Address: 167.99.1.164:1221
+	Username: root
+	Password: 64f07c48f0d6e148^
+```
+### Floating VIP
+
+ 1. radius.ziplinknet.com 165.227.255.1
+
+### Web Apps
+
+Docker Viz http://radius.ziplinknet.com:32712/
+
+phpMyAdmin https://radius.ziplinknet.com/
+
