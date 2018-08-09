@@ -69,4 +69,13 @@ Droplet Name: Radius-HA3
 	Username: root
 	Password: 64f07c48f0d6e148^
 ```
+### Floating VIP
+
+ 1. radius.ziplinknet.com 165.227.255.1
+
+### Web Apps
+
+Docker Viz http://radius.ziplinknet.com:32712/
+
+phpMyAdmin https://radius.ziplinknet.com/
 
