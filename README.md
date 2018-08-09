@@ -4,11 +4,11 @@ Ziplink high availability RADIUS project.
 ## Summary System Description From Job Messages
 
  1. Sonar is used as source of all customer authentication. 3k customers.
- 2. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?)
- 3. New RADIUS server exists. Not finished. 
- 4. HA setup should be architected.
- 5. Sonar "talks" to only one RADIUS server. (Does it? Or does it talk to MySQL?)
- 6. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS.
+ 1. Some NAS RADIUS requests time out, customer is disconnected. (Investigate: Change NAS settings to not go offline until RADIUS answers?) This was solved by fixing DB performance.
+ 1. HA setup should be architected. Has been with Docker swarm.
+ 1. Sonar "talks" to only one DB.
+ 1. Sonar has a "genie" that helps with initial setup. It is out of date with current FreeRADIUS. We will use PHPMyAdmin
+ to add NASs via copy. edit and insert in the nas table.
 
 ### References
 
@@ -19,12 +19,14 @@ Ziplink high availability RADIUS project.
 ## Summary Roadmap
  1. Survey current system. Done.
  1. Document current system. Done.
- 1. Meeting with stakeholders. Pending. Recommend before beta work starts.
+ 1. Meeting with stakeholders. Done.
  1. Work on proposal. Done for current manual failover production system.
- 1. Review proposal for Alpha system. Pending.
- 1. Approve proposal for Alpha system. Pending.
+ 1. Review proposal for Alpha system. Done.
+ 1. Approve proposal for Alpha system. Done.
  1. Work on alpha version. Done.
- 1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config.
+ 1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config. Done.
+ 1. Testing Bitnami based beta version. Ok.
+ 1. Developing aggregation container. Work in progress.
 
 ## Production System Fix
 Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
