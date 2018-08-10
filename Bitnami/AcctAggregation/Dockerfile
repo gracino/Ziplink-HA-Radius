@@ -17,6 +17,8 @@ CMD ["cron"]
 
 ADD crontab /opt/cron/crontabs/root
 ADD aggregate.sh /aggregate.sh
+ADD aggregate-sql.sh /aggregate-sql.sh
+ADD delete.sh /delete.sh
 
 #private repo version:
 #	docker build -t docker0.unxs.io:5000/aggregate:dev .
