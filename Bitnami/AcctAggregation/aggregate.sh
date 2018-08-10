@@ -31,6 +31,6 @@ done
 #	Need to handle all failure scenarios, especially those regarding trunc radacct. Since
 #	that can cause data loss.
 for cIP in `/usr/bin/dig $cMysqlServer +short`;do
-	/aggregate-sql.sh $cIP;
+	/aggregate-sql.sh $cIP debug;
 done
 exit 0;
