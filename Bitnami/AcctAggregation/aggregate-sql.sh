@@ -27,12 +27,12 @@ fi
 cToday=`date +%Y%m%d%H%M`
 
 #lock and dump
-/usr/bin/mysqldump --insert-ignore --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
+/usr/bin/mysqldump --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
 	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" > /tmp/radacct.$1.mysqldump.$cToday;
 if [ "$?" == "0" ];then
-	cWordCount=`/usr/bin/grep -wc INSERT /tmp/radacct.$1.mysqldump.$cToday`;
+	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.mysqldump.$cToday`;
 	if [ "$cWordCount" == "0" ];then
-		echo "No INSERT /tmp/radacct.$1.mysqldump.$cToday";
+		echo "No REPLACE /tmp/radacct.$1.mysqldump.$cToday";
 		exit 0;
 	fi
 	#move data to master
