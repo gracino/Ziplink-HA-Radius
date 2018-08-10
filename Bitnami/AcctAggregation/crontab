@@ -1,1 +1,1 @@
-*/15 * * * *   /aggregate.sh
+*/5 * * * *   /aggregate.sh

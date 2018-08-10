@@ -1,5 +1,7 @@
 #!/bin/bash
 
+fLog() { echo "`date +%b' '%d' '%T` $0[$$]: $@" > /var/log/aggregate.log; }
+
 #We check for a known value that is only available after MySQL is completely available for use.
 
 #Required
@@ -13,6 +15,8 @@ if [ "$cMysqlPassword" == "" ];then
 	exit 3;
 fi
 
+fLog "start";
+
 cStatus="Fail";
 cReturn="";
 while [ $cStatus == "Fail" ]; do
@@ -20,7 +24,7 @@ while [ $cStatus == "Fail" ]; do
   if [ "$?" == "0" ] && [ "$cReturn" == "2" ];then
     cStatus="Ok";
   else
-    echo "Waiting for MySQL";
+    fLog "Waiting for MySQL";
     sleep 10;
   fi
 done
@@ -31,6 +35,8 @@ done
 #	Need to handle all failure scenarios, especially those regarding trunc radacct. Since
 #	that can cause data loss.
 for cIP in `/usr/bin/dig $cMysqlServer +short`;do
-	/aggregate-sql.sh $cIP debug;
+	fLog "$cIP";
+	/aggregate-sql.sh $cIP;
 done
+fLog "end";
 exit 0;

@@ -11,6 +11,8 @@ RUN mkdir -p \
     ln -sf /dev/pts/0 /opt/cron/stdout && \
     ln -sf /dev/pts/0 /opt/cron/stderr
 
+RUN ln -sf /proc/1/fd/1 /var/log/aggregate.log
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["cron"]
 

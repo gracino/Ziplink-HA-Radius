@@ -1,5 +1,7 @@
 #!/bin/bash
 
+fLog() { echo "`date +%b' '%d' '%T` $0[$$]: $@" > /var/log/aggregate.log; }
+
 #simple aggregation
 #we can recover from failures by monitoring /tmp and using files therein to fix problems.
 #we probably need to save the files on persistent storage for this to really work
@@ -18,10 +20,10 @@ fi
 cDebug="No";
 if [ "$2" == "debug" ];then
 	cDebug="Yes";
-	echo "Debug on";
+	fLog "Debug on";
 fi
 
-
+fLog "start";
 
 #timestamp
 cToday=`date +%Y%m%d%H%M`
@@ -32,7 +34,10 @@ cToday=`date +%Y%m%d%H%M`
 if [ "$?" == "0" ];then
 	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.mysqldump.$cToday`;
 	if [ "$cWordCount" == "0" ];then
-		echo "No REPLACE /tmp/radacct.$1.mysqldump.$cToday";
+		fLog "No REPLACE /tmp/radacct.$1.mysqldump.$cToday";
+		if [ "$cDebug" == "No" ];then
+			rm /tmp/radacct.$1.mysqldump.$cToday;
+		fi
 		exit 0;
 	fi
 	#move data to master
@@ -49,20 +54,21 @@ if [ "$?" == "0" ];then
 					rm /tmp/radacct.$1.delete.$cToday;
 				fi
 			else
-				echo "mysql radacct.$1.delete.$cToday failed!";
+				fLog "mysql radacct.$1.delete.$cToday failed!";
 				exit 6;
 			fi
 		else
-			echo "/delete.sh radacct.$1.delete.$cToday failed!";
+			fLog "/delete.sh radacct.$1.delete.$cToday failed!";
 			exit 5;
 		fi
 	else
-		echo "mysql /tmp/radacct.$1.mysqldump.$cToday failed!";
+		fLog "mysql /tmp/radacct.$1.mysqldump.$cToday failed!";
 		exit 4;
 	fi
 else
-	echo "mysqldump $1 failed!";
+	fLog "mysqldump $1 failed!";
 	exit 1;
 fi
 
+fLog "normal end";
 exit 0;
