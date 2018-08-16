@@ -68,6 +68,11 @@ Droplet Name: Radius-HA3
 	IP Address: 167.99.1.164:1221
 	Username: root
 	Password: 64f07c48f0d6e148^
+	
+Droplet Name: Radius-secondary-sfo
+	IP address: 178.128.180.68
+	Username: root
+	Password:  64f07c48f0d6e148^
 ```
 ### Floating VIP
 
