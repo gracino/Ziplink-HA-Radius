@@ -86,9 +86,9 @@ phpMyAdmin https://radius.ziplinknet.com/
 
 ### DNS NAMES with A Records
 
-radius.ziplinknet.com
-ha-radiusmgr.ziplinknet.com
-radius-primary.ziplinknet.com
-radius-secondary.ziplinknet.com
+ 1. radius.ziplinknet.com
+ 1. ha-radiusmgr.ziplinknet.com
+ 1. radius-primary.ziplinknet.com
+ 1. radius-secondary.ziplinknet.com
 
 
