@@ -84,3 +84,11 @@ Docker Viz http://radius.ziplinknet.com:32712/
 
 phpMyAdmin https://radius.ziplinknet.com/
 
+### DNS NAMES with A Records
+
+radius.ziplinknet.com
+ha-radiusmgr.ziplinknet.com
+radius-primary.ziplinknet.com
+radius-secondary.ziplinknet.com
+
+
