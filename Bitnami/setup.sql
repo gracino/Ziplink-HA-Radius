@@ -2,6 +2,11 @@
 
 USE radius;
 
+CREATE TABLE identity (
+  hostname varchar(64) NOT NULL default 'unknown',
+  function varchar(64) NOT NULL default 'acct'
+);
+
 
 ###########################################################################
 # $Id: ca5ac77aa03dbb86ef714d1a1af647f7e63fda00 $                 #
@@ -18,6 +23,7 @@ USE radius;
 #
 # Table structure for table 'radacct'
 #
+
 
 CREATE TABLE radacct (
   radacctid bigint(21) NOT NULL auto_increment,
