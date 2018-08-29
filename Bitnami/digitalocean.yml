@@ -135,23 +135,6 @@ services:
   #
   #
 
-  ##acctdb-master:
-  ##  image: 'docker0.unxs.io:5000/mariadb:dev'
-  ##  deploy:
-  ##    placement:
-  ##      constraints:
-  ##        - node.role == manager
-  ##  volumes:
-  ##    - /data/acctdb-master/bitnami:/bitnami
-  ##  environment:
-  ##    - MARIADB_REPLICATION_MODE=master
-  ##    - MARIADB_REPLICATION_USER=repl_user
-  ##    - MARIADB_REPLICATION_PASSWORD=64f07c48f0
-  ##    - MARIADB_ROOT_PASSWORD=64f07c48f0
-  ##    - MARIADB_USER=5xyrwi8yoyet5t7p
-  ##    - MARIADB_PASSWORD=smusadfwd9wzt59o
-  ##    - MARIADB_DATABASE=radius
-
   acctdb-slave:
     image: 'docker0.unxs.io:5000/mariadb:dev'
     depends_on:
@@ -170,25 +153,6 @@ services:
       - MARIADB_MASTER_HOST=authdb-master
       - MARIADB_MASTER_PORT_NUMBER=3306
       - MARIADB_MASTER_ROOT_PASSWORD=64f07c48f0
-
-  ##acctdb-setup:
-  ##  image: 'docker0.unxs.io:5000/mariadb:dev'
-  ##  depends_on:
-  ##    - acctdb-slave #indirect since it has to wait on authdb-master
-  ##  deploy:
-  ##    placement:
-  ##      constraints:
-  ##        - node.role == manager
-  ##    restart_policy:
-  ##      condition: none
-  ##  volumes:
-  ##    - /data/acctdb-setup/acct-start.sh:/usr/local/sbin/start.sh
-  ##    - /data/acctdb-setup/acct-setup.sql:/tmp/setup.sql
-  ##  command: "/usr/local/sbin/start.sh"
-  ##  environment:
-  ##    - cMysqlServer=acctdb-master
-  ##    - cMysqlLogin=5xyrwi8yoyet5t7p
-  ##    - cMysqlPassword=smusadfwd9wzt59o
 
   #
   #
@@ -227,6 +191,8 @@ services:
   #
   viz:
     image: dockersamples/visualizer
+    depends_on:
+      - acctdb-slave
     deploy:
       placement:
         constraints:
@@ -320,32 +286,6 @@ services:
   #FreeRADIUS Authentication end
   #
   #
-  
-  ##
-  ##
-  ##Nginx loadbalancer HA front-end start
-  ##
-  #nginxfr:
-  #  image: "docker0.unxs.io:5000/nginxfr:dev"
-  #  ports:
-  #    - "1812:1812/udp"
-  #    - "1813:1813/udp"
-  #  environment:
-  #    - cUpstreamAuthServers=auth-freeradius:1812;auth-freeradius:1812
-  #    - cUpstreamAcctServers=acct-freeradius:1813;acct-freeradius:1813
-  #  depends_on:
-  #    - acct-freeradius
-  #    - auth-freeradius
-  #  deploy:
-  #    mode: replicated
-  #    replicas: 2 
-  #    placement:
-  #      constraints:
-  #        - node.role == worker
-  ##
-  ##Nginx loadbalancer HA front-end end
-  ##
-  ##
   
   #
   #
