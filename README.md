@@ -26,7 +26,8 @@ Ziplink high availability RADIUS project.
  1. Work on alpha version. Done.
  1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config. Done.
  1. Testing Bitnami based beta version. Ok.
- 1. Developing aggregation container. Work in progress.
+ 1. Developing aggregation container. Done.
+ 1. Work on raddebug production debug control. Requires control socket in /etc/raddb/radiusd.conf.
 
 ## Production System Fix
 Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
