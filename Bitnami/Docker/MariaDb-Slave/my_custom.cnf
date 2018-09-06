@@ -1,0 +1,9 @@
+[mysqld]
+
+#one day max aprox 10GB
+expire_logs_days=1
+relay_log_space_limit=10073741824
+
+#do not stop replication
+slave-skip-errors=1062,1032
+

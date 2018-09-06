@@ -136,7 +136,7 @@ services:
   #
 
   acctdb-slave:
-    image: 'docker0.unxs.io:5000/mariadb:dev'
+    image: 'docker0.unxs.io:5000/mariadb2:dev'
     depends_on:
       - authdb-master
     deploy:
