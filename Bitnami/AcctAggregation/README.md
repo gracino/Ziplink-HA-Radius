@@ -28,3 +28,7 @@ see the unclosed records also. This has not been implemented correctly yet.
  1. Alpine Linux container will require cron.
  1. Will require MySQL client tools.
  1. Can we get BASH installed in Alpine?.
+ 
+ ### Resources
+ 
+ https://mariadb.com/kb/en/library/using-and-maintaining-the-binary-log/
