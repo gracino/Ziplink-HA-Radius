@@ -1,4 +1,4 @@
-FROM bitnami/mariadb:latest
+FROM docker0.unxs.io:5000/mariadb:dev
 LABEL maintainer "UnxsIO Docker <docker@unxs.io>"
 
 #Customize
