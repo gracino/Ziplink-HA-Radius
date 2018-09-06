@@ -29,4 +29,4 @@ while [ $cStatus == "Fail" ]; do
 done
 
 sleep 3;
-/usr/sbin/radiusd -X -f;
+/usr/sbin/radiusd -f;
