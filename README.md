@@ -54,6 +54,8 @@ The NAS also reports PPPoE address assigned to CPE and data using that traverses
 
 ### Digital Ocean New Production Cluster
 
+Reset broken terminal ```printf '\033[8;40;100t'```
+
 ```
  Droplet Name: Radius-HA1
 	IP Address: 204.48.26.116:1221
