@@ -16,7 +16,7 @@ see the unclosed records also. This has not been implemented correctly yet.
 ### Current Issues
 
  1. radacct records are not updated since they are removed.
- 1. DB replication logs are filling up the docker containers. We need to mount them elsewhere. Or limit size somehow.
+ 1. DB replication logs are filling up the docker containers. We need to mount them elsewhere. Or limit size somehow. ```Done```
 
 ### Roadmap
 
