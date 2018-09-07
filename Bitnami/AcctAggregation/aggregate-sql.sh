@@ -29,7 +29,8 @@ fLog "start";
 cToday=`date +%Y%m%d%H%M`
 
 #lock and dump
-/usr/bin/mysqldump --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
+#we need to move only closed records
+/usr/bin/mysqldump --where='acctstoptime!=NULL' --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
 	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" > /tmp/radacct.$1.mysqldump.$cToday;
 if [ "$?" == "0" ];then
 	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.mysqldump.$cToday`;
