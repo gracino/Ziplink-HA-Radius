@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-RUN apk add --no-cache dcron bash gawk sed grep bc coreutils mysql-client mysql-dev bind-tools
+RUN apk add --no-cache dcron bash gawk sed grep bc coreutils libc6-compat mysql-client mysql-dev bind-tools
 
 ADD entrypoint.sh /
 
@@ -22,6 +22,8 @@ ADD aggregate-sql.sh /aggregate-sql.sh
 ADD delete.sh /delete.sh
 
 ADD bashrc /root/.bashrc
+
+ADD cleanup /root/cleanup
 
 #private repo version:
 #	docker build -t docker0.unxs.io:5000/aggregate:dev .
