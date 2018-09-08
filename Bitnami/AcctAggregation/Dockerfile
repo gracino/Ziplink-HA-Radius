@@ -20,6 +20,7 @@ ADD crontab /opt/cron/crontabs/root
 ADD aggregate.sh /aggregate.sh
 ADD aggregate-sql.sh /aggregate-sql.sh
 ADD delete.sh /delete.sh
+ADD config.slaves.sh /config.slaves.sh
 
 ADD bashrc /root/.bashrc
 
