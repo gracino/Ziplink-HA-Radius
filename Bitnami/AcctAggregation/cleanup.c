@@ -54,6 +54,9 @@ int main(int iArgCount, char *cArgVars[])
 	mysqlRes=mysql_store_result(&Mysql);
         while((mysqlField=mysql_fetch_row(mysqlRes)))
 	{
+		uTargetRadAcctID=0;
+		cPrevAcctUpdateTime[0]=0;
+
         	printf("%s\n",mysqlField[0]);
 		sprintf(cQuery,"SELECT radacctid,acctstarttime,acctupdatetime FROM radacct WHERE username='%s'"
 				" ORDER BY acctupdatetime DESC LIMIT 2",mysqlField[0]);
@@ -92,16 +95,20 @@ int main(int iArgCount, char *cArgVars[])
 		}
 		mysql_free_result(mysqlRes2);
 
-		printf("%u will have it's acctstoptime set to %s\n",uTargetRadAcctID,cPrevAcctUpdateTime);
-/*
-		sprintf(cQuery,"UPDATE radacct SET acctstoptime='%s' WHERE radacctid=%u",cPrevAcctUpdateTime,uTargetRadAcctID);
-		mysql_query(&Mysql,cQuery);
-		if(mysql_errno(&Mysql))
+		if(cPrevAcctUpdateTime[0] && uTargetRadAcctID)
 		{
-			printf("%s\n",mysql_error(&Mysql));
-			return(4);
+			sprintf(cQuery,"UPDATE radacct SET acctstoptime='%s' WHERE radacctid=%u",cPrevAcctUpdateTime,uTargetRadAcctID);
+			mysql_query(&Mysql,cQuery);
+			if(mysql_errno(&Mysql))
+			{
+				printf("%s\n",mysql_error(&Mysql));
+				return(4);
+			}
+			if(mysql_affected_rows(&Mysql)==1)
+				printf("%u had it's acctstoptime set to %s\n",uTargetRadAcctID,cPrevAcctUpdateTime);
+			else
+				printf("%u tried to have it's acctstoptime set to %s, but it failed!\n",uTargetRadAcctID,cPrevAcctUpdateTime);
 		}
-*/
 	}
 	mysql_free_result(mysqlRes);
 
