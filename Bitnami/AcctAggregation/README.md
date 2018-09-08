@@ -15,19 +15,21 @@ see the unclosed records also. This has not been implemented correctly yet.
 
 ### Current Issues
 
- 1. radacct records are not updated since they are removed. ```WorkInProgress```
+ 1. radacct records are not updated since they are removed. ```Done```
  1. DB replication logs are filling up the docker containers. We need to mount them elsewhere. Or limit size somehow. ```Done```
+ 1. We need to clean up radacct records that have never been closed. ```WorkInProgress``` 
 
 ### Roadmap
 
- 1. Create an Alpine Linux container with MySQL client tools.
- 1. Create BASH or SH scripts that will gather data and transfer to master DB.
+ 1. Create an Alpine Linux container with MySQL client tools. ```Done```
+ 1. Create BASH or SH scripts that will gather data and transfer to master DB. ```Done```
+ 1. Create a libmysql C program that will clean up radacct records fast. ```WorkInProgress```
  
 ### Details/Notes
 
- 1. Alpine Linux container will require cron.
- 1. Will require MySQL client tools.
- 1. Can we get BASH installed in Alpine?.
+ 1. Alpine Linux container will require cron. Done.
+ 1. Will require MySQL client tools and development libs. Done.
+ 1. Can we get BASH installed in Alpine?. Yes. Done.
  
  ### Resources
  
