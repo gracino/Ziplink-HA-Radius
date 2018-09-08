@@ -5,9 +5,8 @@
  * 	close open radacct records
  * HOW IT WORKS
  * 	find usernames that have open duplicate sessions
- * 	set acctstoptime of latest records to previous latest record acctupdatettime
- *
- * COMPILE
+ * 	set acctstoptime of prev latest records to latest record acctuupdatettime
+ * BEFORE DOCKER BUILD COMPILE
  * 	gcc cleanup.c -lmysqlclient -L/lib64/mysql
 */
 
