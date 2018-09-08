@@ -29,13 +29,11 @@ while [ $cStatus == "Fail" ]; do
   fi
 done
 
-#Aggregation Summary: 
-#	Here we write lock radacct, mysqldump radacct data, 
-#	if ok then we truncate radacct, release lock on radacct, Then we insert into master DB.
-#	Need to handle all failure scenarios, especially those regarding trunc radacct. Since
-#	that can cause data loss.
 for cIP in `/usr/bin/dig $cMysqlServer +short`;do
 	fLog "$cIP";
+	fLog "/root/cleanup";
+	/root/cleanup $cIP $cMysqlLogin $cMysqlPassword > /var/log/aggregate.log;
+	fLog "aggregate-sql.sh";
 	/aggregate-sql.sh $cIP;
 done
 fLog "end";

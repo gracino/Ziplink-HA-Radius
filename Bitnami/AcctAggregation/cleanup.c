@@ -58,7 +58,8 @@ int main(int iArgCount, char *cArgVars[])
 		cPrevAcctUpdateTime[0]=0;
 
         	printf("%s\n",mysqlField[0]);
-		sprintf(cQuery,"SELECT radacctid,acctstarttime,acctupdatetime FROM radacct WHERE username='%s'"
+		sprintf(cQuery,"SELECT radacctid,acctstarttime,acctupdatetime FROM radacct"
+				" WHERE username='%s' AND acctstoptime IS NULL"
 				" ORDER BY acctupdatetime DESC LIMIT 2",mysqlField[0]);
 		mysql_query(&Mysql,cQuery);
 		if(mysql_errno(&Mysql))
