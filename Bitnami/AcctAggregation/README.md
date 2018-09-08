@@ -20,7 +20,8 @@ see the unclosed records also.
  1. We need to clean up radacct records that have never been closed. ```Done```
  1. Identical ```acctsessionid``` records may be spread across the DB cluster with only one having the latest data. Since
  these records are copied via an update on the ```acctsessionid``` key old data my replace newer data. ```NotCritical```
- 1. We need to restrict authdb-master replication to not include ```radacct``` table. ```BeingResearched```
+ 1. We need to restrict authdb-master replication to not include ```radacct``` table. This has been accomplished
+ via aggregation container crontab @reboot /config.slaves.sh. ```Done```
 
 ### Roadmap
 
