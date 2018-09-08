@@ -30,7 +30,7 @@ cToday=`date +%Y%m%d%H%M`
 
 #lock and dump
 #we need to move only closed records
-/usr/bin/mysqldump --where='acctstoptime!=NULL' --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
+/usr/bin/mysqldump --where='acctstoptime IS NOT NULL' --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
 	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" > /tmp/radacct.$1.mysqldump.$cToday;
 if [ "$?" == "0" ];then
 	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.mysqldump.$cToday`;
@@ -41,6 +41,7 @@ if [ "$?" == "0" ];then
 		fi
 		exit 0;
 	fi
+	fLog "$cWordCount REPLACE records in /tmp/radacct.$1.mysqldump.$cToday";
 	#move data to master
 	/usr/bin/mysql -h authdb-master -p$cMysqlPassword -u$cMysqlLogin radius < /tmp/radacct.$1.mysqldump.$cToday;
 	if [ "$?" == "0" ];then

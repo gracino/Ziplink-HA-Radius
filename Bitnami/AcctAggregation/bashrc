@@ -1,0 +1,2 @@
+#reset terminal
+printf '\033[8;40;100t'
