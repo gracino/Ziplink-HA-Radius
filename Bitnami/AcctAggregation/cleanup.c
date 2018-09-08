@@ -7,7 +7,7 @@
  * 	find usernames that have open duplicate sessions
  * 	set acctstoptime of prev latest records to latest record acctuupdatettime
  * BEFORE DOCKER BUILD COMPILE
- * 	gcc cleanup.c -lmysqlclient -L/lib64/mysql
+ * 	gcc cleanup.c -lmysqlclient -L/lib64/mysql -o cleanup
 */
 
 #include <stdio.h>
@@ -29,7 +29,7 @@ int main(int iArgCount, char *cArgVars[])
 		printf("Could not connect\n");
 		return(1);
 	}
-	printf("Connected\n");
+	//printf("Connected\n");
 
 
 	//Create a list of sessions with same username
@@ -97,7 +97,8 @@ int main(int iArgCount, char *cArgVars[])
 
 		if(cPrevAcctUpdateTime[0] && uTargetRadAcctID)
 		{
-			sprintf(cQuery,"UPDATE radacct SET acctstoptime='%s' WHERE radacctid=%u",cPrevAcctUpdateTime,uTargetRadAcctID);
+			sprintf(cQuery,"UPDATE radacct SET acctstoptime='%s',connectinfo_stop='%.32s %.16s' WHERE radacctid=%u",
+					cPrevAcctUpdateTime,cArgVars[0],cArgVars[1],uTargetRadAcctID);
 			mysql_query(&Mysql,cQuery);
 			if(mysql_errno(&Mysql))
 			{
