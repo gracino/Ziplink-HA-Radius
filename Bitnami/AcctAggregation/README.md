@@ -38,3 +38,4 @@ see the unclosed records also.
  
  1. https://mariadb.com/kb/en/library/using-and-maintaining-the-binary-log/
  1. https://www.getpagespeed.com/server-setup/mysql-slave-replication
+ 1. https://mariadb.com/kb/en/library/replication-and-binary-log-server-system-variables
