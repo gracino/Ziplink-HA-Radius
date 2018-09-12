@@ -9,7 +9,7 @@ MAINTAINER Support Group <docker@unxs.io>
 WORKDIR /projects
 
 RUN apk update && apk upgrade && \
-    apk add --update freeradius freeradius-mysql mysql-client freeradius-radclient openssl-dev && \
+    apk add --update freeradius freeradius-mysql mysql-client freeradius-radclient openssl-dev bind-tools && \
     chgrp radius  /usr/sbin/radiusd && chmod g+rwx /usr/sbin/radiusd && \
     rm /var/cache/apk/*
 
