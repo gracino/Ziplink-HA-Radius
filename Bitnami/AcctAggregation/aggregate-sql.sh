@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#REPLACE INTO `radacct` VALUES (...,'RADIUS','',...)
+
+
 fLog() { echo "`date +%b' '%d' '%T` $0[$$]: $@" > /var/log/aggregate.log; }
 
 #simple aggregation
@@ -30,7 +33,7 @@ cToday=`date +%Y%m%d%H%M`
 #we need to move only closed records
 fLog "Move start";
 /usr/bin/mysqldump --where='acctstoptime IS NOT NULL' --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
-	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" > /tmp/radacct.$1.mysqldump.$cToday;
+	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" | sed -e "s/'RADIUS','',/'RADIUS','$1 move',/g" > /tmp/radacct.$1.mysqldump.$cToday;
 if [ "$?" == "0" ];then
 	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.mysqldump.$cToday`;
 	if [ "$cWordCount" == "0" ];then
@@ -74,7 +77,7 @@ fi
 #we need to copy only NOT closed records
 fLog "Copy start";
 /usr/bin/mysqldump --where='acctstoptime IS NULL' --replace --skip-extended-insert --no-create-db --no-create-info --lock-tables -h $1 -u$cMysqlLogin -p$cMysqlPassword \
-	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" > /tmp/radacct.$1.copy.mysqldump.$cToday;
+	radius radacct | sed -e "s/([0-9]*,/(NULL,/g" | sed -e "s/'RADIUS','',/'RADIUS','$1 copy',/g" > /tmp/radacct.$1.copy.mysqldump.$cToday;
 if [ "$?" == "0" ];then
 	cWordCount=`/usr/bin/grep -wc REPLACE /tmp/radacct.$1.copy.mysqldump.$cToday`;
 	if [ "$cWordCount" == "0" ];then
@@ -89,6 +92,9 @@ if [ "$?" == "0" ];then
 		if [ "$?" != "0" ];then
 			fLog "mysql /tmp/radacct.$1.copy.mysqldump.$cToday failed!";
 			exit 4;
+		fi
+		if [ "$cDebug" == "No" ];then
+			rm /tmp/radacct.$1.copy.mysqldump.$cToday;
 		fi
 	fi
 else

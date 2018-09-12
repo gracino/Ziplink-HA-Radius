@@ -13,8 +13,6 @@ if [ "$cMysqlPassword" == "" ];then
 	exit 3;
 fi
 
-envsubst '${cMysqlServer},${cMysqlLogin},${cMysqlPassword}' < /etc/raddb/sql.template > /etc/raddb/mods-available/sql;
-
 
 cStatus="Fail";
 cReturn="";
@@ -27,6 +25,11 @@ while [ $cStatus == "Fail" ]; do
     sleep 10;
   fi
 done
+
+cClosestServer=`/usr/bin/dig $cMysqlServer +short | while read cServers ; do ping -c 1 -w 1 $cServers 2>/dev/null | fgrep ' time=' | sed 's/ time=/\n/' | grep ' ms' | sed 's/ ms$/ /' | sed 's/\./ |/' | cut -d "|" -f1 | tr -d '\n'; if [ $? -eq 0 ]; then echo "$cServers"; fi; done | grep "^[0-9]" | sort -un | head -1 | awk '{print $2}'`;
+export cMysqlDBIp=$cClosestServer;
+
+envsubst '${cMysqlDBIp},${cMysqlLogin},${cMysqlPassword}' < /etc/raddb/sql.template > /etc/raddb/mods-available/sql;
 
 sleep 3;
 /usr/sbin/radiusd -f;

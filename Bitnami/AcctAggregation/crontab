@@ -1,2 +1,2 @@
 @reboot /config.slaves.sh
-*/5 * * * *   /aggregate.sh
+*/2 * * * *   /aggregate.sh

@@ -94,7 +94,7 @@ sql {
 #	port = 3306
 #	login = "radius"
 #	password = "radpass"
-	server = "${cMysqlServer}"
+	server = "${cMysqlDBIp}"
 	port = 3306
 	login = "${cMysqlLogin}"
 	password = "${cMysqlPassword}"
