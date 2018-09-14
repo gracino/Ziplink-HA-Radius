@@ -35,7 +35,7 @@ SELECT
   acctstarttime,
   acctupdatetime,
   acctstoptime,
-  (acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR))) AS OrphanSession,
+  (acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR)) AND acctstoptime IS NULL) AS OrphanSession,
   connectinfo_start,
   connectinfo_stop,
   nasipaddress,
