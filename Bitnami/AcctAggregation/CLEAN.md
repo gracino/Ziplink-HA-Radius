@@ -19,7 +19,7 @@ We define Orphan Sessions (OS) as radacct rows with acctupdatetime that are olde
 List OS:
 ```
 SELECT * FROM `radacct` WHERE acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR))
-  AND acctstoptime IS NULL
+  AND acctstoptime IS NULL;
  ```
 
 Track other user sessions for users with orphan sessions:
@@ -27,4 +27,10 @@ Track other user sessions for users with orphan sessions:
 SELECT * FROM radacct WHERE username IN
   (SELECT username FROM `radacct` WHERE acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR))
   AND acctstoptime IS NULL) ORDER BY username,acctstarttime;
+```
+
+```
+SELECT username,acctstarttime,acctupdatetime,acctstoptime,(acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR))) AS OrphanSession,connectinfo_start,connectinfo_stop,nasipaddress,NOW() FROM radacct WHERE username IN
+  (SELECT username FROM `radacct` WHERE acctupdatetime<(DATE_SUB(NOW(),INTERVAL 1 HOUR))
+  AND acctstoptime IS NULL) ORDER BY username,acctstarttime
 ```
