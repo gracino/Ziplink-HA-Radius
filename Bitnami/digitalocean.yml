@@ -296,6 +296,7 @@ services:
     image: "docker0.unxs.io:5000/aggregate:dev"  
     environment:
       - cMysqlServer=acctdb-slave
+      - cMysqlServerAuth=authdb-slave
       - cMysqlLogin=root
       - cMysqlPassword=64f07c48f0
     depends_on:
