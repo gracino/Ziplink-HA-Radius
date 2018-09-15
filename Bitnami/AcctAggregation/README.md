@@ -1,4 +1,4 @@
-## Accounting Aggregation Subsystem
+## Accounting Aggregation and Front End DB Maintenance Subsystem
 
 We need to periodically gather accounting data from all accounting DBs into the single master DB.
 
@@ -12,6 +12,10 @@ For the ISP management system Sonar to work correctly it needs to see all these 
 
 We need to only remove the "closed" records. E.g. records that will not be updated by the NASs anymore. Sonar wants to
 see the unclosed records also. 
+
+### Other Front End DB Ops
+
+See [CLEAN.md](CLEAN.md).
 
 ### Current Issues
 

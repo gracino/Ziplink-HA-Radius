@@ -26,8 +26,10 @@ Ziplink high availability RADIUS project.
  1. Work on alpha version. Done.
  1. Work on beta version. Docs, repo work, adding MySQL master and replication startup/config. Done.
  1. Testing Bitnami based beta version. Ok.
- 1. CRITICAL: Developing aggregation container. Need to figure out how to aggregate closed radacct records. 
- 1. CRITICAL: Volume work is required DB acctdb-slave runs out of space.
+ 1. CRITICAL: Developing aggregation container. Need to figure out how to aggregate closed radacct records. ```Done```
+ 1. CRITICAL: Volume work is required DB acctdb-slave runs out of space. ```Done```
+ 1. Weekly removal of closed radacct records. ```WorkInProgress```
+ 1. Daily Early AM PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY. ```WorkInProgress```
 
 ## Production System Fix
 Linux system admin work determined that the VM used was not resourced correctly. Lack of cores and RAM were
