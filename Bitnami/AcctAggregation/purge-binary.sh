@@ -1,10 +1,9 @@
 #!/bin/bash
 
 #Purpose
-#	Delete closed radacct records older than 48 hours ago.
-#	Operates on aggregation authdb-master DB.
+#	Purge MySQL binary logs
 #Use Case
-#	Every hour via crontab we remove these records to keep
+#	Every day via crontab we remove these records to keep
 #	the DB from growing disk usage.
 
 fLog() { echo "`date +%b' '%d' '%T` $0[$$]: $@" > /var/log/aggregate.log; }
@@ -27,11 +26,11 @@ while [ $cStatus == "Fail" ]; do
     cStatus="Ok";
   else
     fLog "Waiting for MySQL";
-    sleep 30;
+    sleep 50;
   fi
 done
 
 /usr/bin/mysql -B -N -h authdb-master -u$cMysqlLogin -p$cMysqlPassword \
-	radius -e 'DELETE FROM radacct WHERE acctstoptime<DATE_SUB(NOW(),INTERVAL 2 DAY)';
+	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY';
 fLog "end";
 exit 0;

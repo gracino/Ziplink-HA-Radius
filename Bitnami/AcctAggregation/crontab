@@ -1,2 +1,9 @@
+#only on boot remove radacct from replication
 @reboot /config.slaves.sh
+
+#main workload
 */2 * * * *   /aggregate.sh
+
+#other cleanup on authdb-master
+17 4 * * * /remove-closed.sh
+37 3 * * * /purge-binary.sh

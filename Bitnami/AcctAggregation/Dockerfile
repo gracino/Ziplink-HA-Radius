@@ -21,6 +21,8 @@ ADD aggregate.sh /aggregate.sh
 ADD aggregate-sql.sh /aggregate-sql.sh
 ADD delete.sh /delete.sh
 ADD config.slaves.sh /config.slaves.sh
+ADD remove-closed.sh /remove-closed.sh
+ADD purge-binary.sh /purge-binary.sh
 
 ADD bashrc /root/.bashrc
 
