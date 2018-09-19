@@ -30,7 +30,15 @@ while [ $cStatus == "Fail" ]; do
   fi
 done
 
+fLog "Purge authdb-master";
 /usr/bin/mysql -B -N -h authdb-master -u$cMysqlLogin -p$cMysqlPassword \
 	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY';
+
+
+for cIP in `/usr/bin/dig $cMysqlServer +short`;do
+	fLog "Purge slave $cIP";
+	/usr/bin/mysql -B -N -h $cIP -u$cMysqlLogin -p$cMysqlPassword \
+	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY';
+done
 fLog "end";
 exit 0;
