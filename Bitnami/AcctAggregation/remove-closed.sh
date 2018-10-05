@@ -32,6 +32,7 @@ while [ $cStatus == "Fail" ]; do
 done
 
 /usr/bin/mysql -B -N -h authdb-master -u$cMysqlLogin -p$cMysqlPassword \
-	radius -e 'DELETE FROM radacct WHERE acctstoptime<DATE_SUB(NOW(),INTERVAL 2 DAY)';
+	radius -e 'DELETE FROM radacct WHERE acctstoptime<DATE_SUB(NOW(),INTERVAL 1 DAY)';
+	radius -e 'DELETE FROM radacct WHERE acctstoptime IS NULL AND acctupdatetime<DATE_SUB(NOW(),INTERVAL 2 DAY)';
 fLog "end";
 exit 0;

@@ -5,5 +5,5 @@
 */2 * * * *   /aggregate.sh
 
 #other cleanup on authdb-master
-17 4 * * * /remove-closed.sh
-37 3 * * * /purge-binary.sh
+17 * * * * /remove-closed.sh
+37 * * * * /purge-binary.sh

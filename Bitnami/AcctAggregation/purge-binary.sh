@@ -32,13 +32,13 @@ done
 
 fLog "Purge authdb-master";
 /usr/bin/mysql -B -N -h authdb-master -u$cMysqlLogin -p$cMysqlPassword \
-	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY';
+	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 2 DAY';
 
 
 for cIP in `/usr/bin/dig $cMysqlServer +short`;do
 	fLog "Purge slave $cIP";
 	/usr/bin/mysql -B -N -h $cIP -u$cMysqlLogin -p$cMysqlPassword \
-	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 3 DAY';
+	radius -e 'PURGE BINARY LOGS BEFORE NOW()-INTERVAL 2 DAY';
 done
 fLog "end";
 exit 0;
