@@ -1,0 +1,2 @@
+#Check radius.nas table if changed reload radius servers via swarm mode
+*/30 * * * * /usr/local/sbin/reload.radius.onnaschange.sh
