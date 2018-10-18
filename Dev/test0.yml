@@ -1,0 +1,64 @@
+#
+#FILE
+#DETAILS
+#
+#VOLUMES
+#
+# mkdir -p /data/authdb-master/bitnami
+# chmod g+w /data/authdb-master/bitnami
+#
+# mkdir -p /data/authdb-setup
+# cp -i auth-start.sh /data/authdb-setup/
+# cp -i auth-setup.sql /data/authdb-setup/
+#
+# mkdir /data/freeradius
+# cp -i clients.conf /data/freeradius/
+# cp -i users /data/freeradius/
+#
+
+version: '3.3'
+
+services:
+  
+  authdb-master:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    volumes:
+      - /data/authdb-master/bitnami:/bitnami
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=repl_user
+      - MARIADB_REPLICATION_PASSWORD=64f07c48f0
+      - MARIADB_ROOT_PASSWORD=64f07c48f0
+      - MARIADB_USER=5xyrwi8yoyet5t7p
+      - MARIADB_PASSWORD=smusadfwd9wzt59o
+      - MARIADB_DATABASE=radius
+    ports:
+      - '3306:3306'
+
+  authdb-setup:
+    image: 'docker0.unxs.io:5000/mariadb:dev'
+    depends_on:
+      - authdb-master #indirect since it has to wait on authdb-master
+    volumes:
+      - /data/authdb-setup/auth-start.sh:/usr/local/sbin/start.sh
+      - /data/authdb-setup/auth-setup.sql:/tmp/setup.sql
+    command: "/usr/local/sbin/start.sh"
+    environment:
+      - cMysqlServer=authdb-master
+      - cMysqlLogin=5xyrwi8yoyet5t7p
+      - cMysqlPassword=smusadfwd9wzt59o
+
+  auth-freeradius:
+    image: "docker0.unxs.io:5000/freeradius:debug"
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    volumes:
+      - /data/freeradius/clients.conf:/etc/raddb/clients.conf
+      - /data/freeradius/users:/etc/raddb/users
+    environment:
+      - cMysqlServer=authdb-master
+      - cMysqlLogin=root
+      - cMysqlPassword=64f07c48f0
+    depends_on:
+      - authdb-master
