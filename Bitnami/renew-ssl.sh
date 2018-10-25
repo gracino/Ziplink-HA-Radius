@@ -3,5 +3,10 @@
 #Example usage
 #19 0,12 * * * /root/renew-ssl.sh
 
-docker run --rm --name letsencrypt -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/usr/share/nginx/html:/usr/share/nginx/html" certbot/certbot:latest renew --quiet
-#docker run --rm --name letsencrypt -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/usr/share/nginx/html:/usr/share/nginx/html" certbot/certbot:latest renew 
+#turn off phpmyadmin to free ports 80 and 443
+docker service rm radiuscluster_phpmyadmin > /dev/null 2>&1;
+if [ "$?" == "0" ];then
+	sleep 10;
+	docker run --rm -p 443:443 -p 80:80 --name letsencrypt -v "/data/letsencrypt:/etc/letsencrypt" certbot/certbot renew --quiet;
+	docker stack deploy --compose-file digitalocean.yml radiuscluster --with-registry-auth > /dev/null 2>&1;
+fi
