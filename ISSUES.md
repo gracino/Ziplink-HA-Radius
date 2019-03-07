@@ -7,6 +7,20 @@ The current aggregation code moves everything to the ```authdb-master```,
 we need to only move "closed" ```radacct``` table records. 
 
 ### Server Maintenance
+
+#### Node crontab
+
+```
+[root@Radius-secondary ~]# crontab -l
+#zap large docker mysqld.log files
+17 * * * *  /usr/local/sbin/clean-mysqld.log.sh > /dev/null 2>&1;
+#zap radius.log's daily
+40 4 * * *  /usr/local/sbin/clean-radius.log.sh > /dev/null 2>&1;
+#keep tasks.db in control
+#20 2 * * * service docker stop > /dev/null;rm /var/lib/docker/swarm/worker/tasks.db;service docker start > /dev/null;
+
+```
+
 #### tasks.db
 The secondary node had a huge ```/var/lib/docker/swarm/worker/tasks.db```
 
