@@ -1,0 +1,6 @@
+#zap large docker mysqld.log files
+17 * * * *  /usr/local/sbin/clean-mysqld.log.sh > /dev/null 2>&1;
+#zap radius.log's daily
+40 4 * * *  /usr/local/sbin/clean-radius.log.sh > /dev/null 2>&1;
+#keep tasks.db in control
+#20 2 * * * service docker stop > /dev/null;rm /var/lib/docker/swarm/worker/tasks.db;service docker start > /dev/null;
