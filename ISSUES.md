@@ -7,6 +7,17 @@ The current aggregation code moves everything to the ```authdb-master```,
 we need to only move "closed" ```radacct``` table records. 
 
 ### Server Maintenance
+#### tasks.db
+The secondary node had a huge ```/var/lib/docker/swarm/worker/tasks.db```
+
+This fixes it:
+
+```
+# service docker stop
+# rm /var/lib/docker/swarm/worker/tasks.db
+# service docker start
+```
+
 #### Logs
 
 We need to keep non ext volume containers like ```radiuscluster_acctdb-slave``` from taking up scarce disk resources.
