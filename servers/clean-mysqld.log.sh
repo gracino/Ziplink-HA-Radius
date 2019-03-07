@@ -1,12 +1,5 @@
 #!/bin/bash
 
-for cLog in `find /var/lib/docker/ -name radius.log | grep -w diff`;do
-	echo $cLog;
-	cat /dev/null > $cLog;
-done
-[root@Radius-secondary ~]# cat /usr/local/sbin/clean-mysqld.log.sh
-#!/bin/bash
-
 #Purpose
 #	truncate all container mysqld.log files.
 
