@@ -1,0 +1,13 @@
+#Check radius.nas table if changed reload radius servers via swarm mode
+*/30 * * * * /usr/local/sbin/reload.onnaschange.sh
+
+#Restart every 1st and 15th at 3:07am
+#7 3 1,15 * * /usr/local/sbin/reload.nas.sh
+#Restart at 3:07am if disk space is above 60%
+7 3 * * * /usr/local/sbin/disk.based.reload.sh
+
+#Renew ssl cert
+2 1,16 * * * /usr/local/sbin/renew-ssl.sh
+
+#Watch disk usage
+37 4 * * * /usr/local/sbin/mail.disk.report.sh > /dev/null 2>&1;
